@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rank 6 Fire Truck - Python Turtle</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#17223b;--muted:#4a5568;--line:#b8c0cc;--blue:#1d4ed8;--blueb:#dbeafe;
+--green:#007344;--greenb:#e6f2ec;--amber:#8a4300;--amberb:#fef3c7;--red:#b91c1c;--redb:#fee2e2;--code:#fffef8;
+--gold:#b8860b;--goldb:#fff3bf;--bar:#c2410c}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1524;--card:#18213a;--ink:#e8ecf7;--muted:#aab4cc;
+--line:#2f3b5d;--blue:#8fb3ff;--blueb:#1b2a55;--green:#5fd39c;--greenb:#10332a;--amber:#f0b45a;--amberb:#3a2f12;--red:#ff9b9b;
+--redb:#3d1a1a;--code:#0c1220;--gold:#ffd966;--goldb:#3d3210;--bar:#ffa56b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.55 Arial,Helvetica,sans-serif}
+header{background:var(--hd,#007344);color:#fff;padding:14px 20px}
+header .top{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between}
+header h1{margin:0;font-size:1.7rem}
+header .sub{opacity:.95;font-size:.95rem}
+.badge{display:inline-block;font-weight:bold;border:2px solid #fff;border-radius:99px;padding:1px 12px;margin-right:6px}
+.meter{background:rgba(255,255,255,.3);border-radius:99px;height:14px;width:220px;overflow:hidden}
+.meter i{display:block;height:100%;background:#fff;width:0;transition:width .3s}
+main{max-width:1180px;margin:0 auto;padding:16px}
+.ice{background:var(--goldb);border:3px solid var(--gold);border-radius:14px;padding:12px 16px;margin:0 0 16px;font-size:1.1rem}
+.ice b{font-size:1.25rem}
+.ice.none{background:var(--blueb);border-color:var(--blue)}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 16px}
+.card h2{margin:0 0 6px;font-size:1.3rem}
+.hero{display:grid;grid-template-columns:minmax(260px,1fr) minmax(280px,1.1fr);gap:16px;align-items:center}
+@media (max-width:820px){.hero,.stepgrid{grid-template-columns:1fr!important}}
+svg.pic{width:100%;height:auto;border:2px solid var(--line);border-radius:10px;display:block;background:#fff}
+svg.pic .old{opacity:.35}
+ul.tight{margin:6px 0;padding-left:22px}
+ul.tight li{margin:3px 0}
+.rule{background:var(--amberb);border-left:6px solid var(--amber);border-radius:8px;padding:8px 12px;margin:8px 0}
+.new{background:var(--greenb);border-left:6px solid var(--green);border-radius:8px;padding:6px 12px;margin:8px 0}
+.new b{color:var(--green)}
+.new code,.rule code,li code,p code{font-family:ui-monospace,Consolas,"DejaVu Sans Mono",monospace;background:rgba(0,0,0,.07);padding:0 4px;border-radius:4px;font-size:.92em}
+.step{scroll-margin-top:12px}
+.step.done{border-color:var(--green);background:linear-gradient(0deg,var(--greenb),var(--card) 30%)}
+.step h2 .num{display:inline-block;background:var(--blue);color:#fff;border-radius:99px;min-width:2em;text-align:center;margin-right:8px;padding:0 8px}
+.step.done h2 .num{background:var(--green)}
+.stepgrid{display:grid;grid-template-columns:minmax(300px,1.15fr) minmax(260px,1fr);gap:16px;align-items:start}
+.lab{font-weight:bold;color:var(--blue);margin:10px 0 2px}
+.code{background:var(--code);border:2px solid var(--ink);border-radius:10px;padding:10px 6px;
+font:20px/1.55 ui-monospace,Consolas,"DejaVu Sans Mono",monospace;font-variant-ligatures:none;
+overflow-x:auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:default}
+.ln{display:flex;white-space:pre}
+.no{flex:none;width:2.8em;text-align:right;padding-right:.9em;color:var(--muted);font-size:.85em}
+.ind{flex:none;display:inline-block;width:4ch;border-left:3px solid var(--bar);margin-left:.1ch;opacity:.8}
+.tx{white-space:pre}
+.fine{color:var(--muted);font-size:.92rem}
+.chk{display:flex;gap:10px;align-items:center;margin-top:12px;font-weight:bold;cursor:pointer}
+.chk input{width:26px;height:26px;accent-color:var(--green)}
+.finish{display:none;background:var(--greenb);border:3px solid var(--green);border-radius:14px;padding:14px 18px;margin:0 0 16px;font-size:1.15rem}
+.finish.show{display:block}
+details{margin:10px 0}
+summary{cursor:pointer;font-weight:bold}
+summary:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+nav.pn{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:10px 0}
+nav.pn a,a.btn{background:var(--blue);color:#fff;text-decoration:none;font-weight:bold;border-radius:10px;padding:8px 14px;display:inline-block}
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#17223b;color:#fff;padding:10px 18px;border-radius:10px;
+font-weight:bold;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9}
+#toast.on{opacity:1}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--blueb)}
+td svg.pic{width:150px}
+td a{color:var(--blue);font-size:1.05rem}
+.lv-Easy{--hd:#007344}.lv-Medium{--hd:#a15c00}.lv-Hard{--hd:#9f1239}
+.tag{display:inline-block;font-size:.82rem;font-weight:bold;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin:2px 3px 0 0}
+@media print{.chk,#toast{display:none}}
+</style>
+</head>
+<body class="lv-Medium" data-key="firetruck">
+<header>
+ <div class="top">
+  <div>
+   <h1>Python Turtle: Fire Truck</h1>
+   <div class="sub"><span class="badge">Medium</span><span class="badge">Rank 6 of 12</span>
+   <a href="index.html" style="color:#fff;font-weight:bold;margin-right:8px">&larr; All 12 pictures</a><span title="Difficulty" aria-label="Difficulty 3 out of 5">&#9733;&#9733;&#9733;&#9734;&#9734;</span></div>
+  </div>
+  <div><div class="meter" aria-hidden="true"><i></i></div><div class="sub" id="count" aria-live="polite"></div></div>
+ </div>
+</header>
+<main>
+<div class="ice"><b>5 ICE (positive) points, guaranteed!</b><br>Finish this whole Python file (7_firetruck.py), run it with F5 and show your teacher the picture on your screen. This Medium picture gets <b>5 ICE (positive) points</b> when it is complete.</div>
+<section class="card">
+ <div class="hero">
+  <div>
+   <h2>What you will make</h2>
+   <p>A red fire engine with a ladder, a siren and the word FIRE on the side.</p>
+   <ul class="tight">
+    <li>Difficulty: <b>Medium</b>, rank <b>6</b> out of 12 (1 is easiest).</li>
+    <li>About <b>95 lines</b> of code and about <b>40 minutes</b>.</li>
+    <li>Save your file as <code>7_firetruck.py</code> in your Year 7 Python folder.</li>
+   </ul>
+  </div>
+  <div><svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="The finished Fire Truck picture" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/><polygon points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="lightblue" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="55.0,-5.0 55.0,60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="darkgrey" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="silver" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-200.0,-60.0 -200.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-180.0,-60.0 -180.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-160.0,-60.0 -160.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-140.0,-60.0 -140.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-120.0,-60.0 -120.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-100.0,-60.0 -100.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-80.0,-60.0 -80.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-60.0,-60.0 -60.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-40.0,-60.0 -40.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><circle cx="55.0" cy="-80.0" r="12.0" fill="blue"/><circle cx="-150.0" cy="80.0" r="30.0" fill="black"/><circle cx="-150.0" cy="80.0" r="14.0" fill="lightgrey"/><circle cx="-50.0" cy="80.0" r="30.0" fill="black"/><circle cx="-50.0" cy="80.0" r="14.0" fill="lightgrey"/><circle cx="70.0" cy="80.0" r="30.0" fill="black"/><circle cx="70.0" cy="80.0" r="14.0" fill="lightgrey"/><text x="-191.0" y="16.788719999999998" font-family="Arial, Arial, sans-serif" font-size="37.3" font-weight="bold" fill="white">FIRE</text><polyline points="-260.0,110.0 260.0,110.0" fill="none" stroke="grey" stroke-width="6.0" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+ </div>
+</section>
+<section class="card">
+ <h2>Before you start: how to type</h2>
+ <ul class="tight">
+  <li><b>You must type every line yourself.</b> Copy and paste is switched off on this page on purpose. Typing is how you learn.</li>
+  <li>Open IDLE. <b>File, New File</b>. Press <b>Ctrl and S</b> and save it as <code>7_firetruck.py</code>.</li>
+  <li>Type the lines of each step <b>at the end</b> of your file. Do not type the line numbers.</li>
+  <li>Turn on line numbers in IDLE: <b>Options, Show Line Numbers</b>. Then you can match your lines to this page.</li>
+  <li>Only type the code in the <b>white boxes with line numbers</b>. The green <b>New idea</b> boxes are for reading.</li>
+  <li>Copy every letter, bracket and quote exactly. Use straight quotes <code>"like this"</code>. Python is fussy about capital letters. <code>0</code> is the number zero, not the letter O.</li>
+  <li>After each step press <b>F5</b>. Check your picture. Then tick the box and move on.</li>
+ </ul>
+ <details>
+  <summary>My program has an error. What do I check?</summary>
+  <ul class="tight">
+   <li><b>SyntaxError</b>: a missing bracket <code>)</code>, a missing quote <code>"</code> or a missing colon <code>:</code>. Look at the line IDLE highlights, and the line above it.</li>
+   <li><b>IndentationError</b>: the bars are wrong. Lines inside a loop must have the same number of bars as the picture on this page.</li>
+   <li><b>NameError</b> or <b>AttributeError</b>: a spelling mistake, like <code>t.forwad</code> or <code>t.Goto</code>. Everything is lower case.</li>
+   <li><b>AttributeError: ... has no attribute 'fillcolour'</b>: Python commands use the American spelling <code>color</code>, so it is <code>t.fillcolor</code> and <code>t.pencolor</code>. Never <code>colour</code>.</li>
+   <li><b>bad color name</b>: a colour is spelt wrongly or has no quotes. Use the exact name from the page.</li>
+   <li><b>Nothing happens or the turtle window is blank</b>: did you save and press <b>F5</b>? Is <code>import turtle</code> on line 1 and <code>t = turtle</code> on line 2?</li>
+   <li>Picture looks wrong but no error? Compare each number with this page. One wrong number moves a shape.</li>
+   <li>Still stuck? Read the line out loud to your partner, then ask your teacher.</li>
+  </ul>
+ </details>
+</section>
+<div class="finish" role="status"><b>You did it!</b> Save the file (Ctrl and S), press F5, and call your teacher to see the picture on your screen. That is <b>5 ICE (positive) points, guaranteed</b>.</div>
+
+<section class="card step" id="s1">
+ <h2><span class="num">1</span>Set up your file</h2>
+ <p>The usual four lines.</p>
+ <div class="stepgrid">
+  <div>
+   <div class="new"><b>New idea (just read this, do not type it):</b><ul class="tight"><li><code>import turtle  and  t = turtle</code> &nbsp;Loads the turtle. After this we can write t. before every command.</li><li><code>t.speed(0)</code> &nbsp;Makes the turtle draw as fast as it can.</li><li><code>t.pensize(3)</code> &nbsp;Sets how thick the pen line is.</li></ul></div>
+   <div class="lab">Type these 4 lines at the end of your file (lines 1 to 4):</div>
+   <div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="no">1</span><span class="tx">import turtle</span></span><span class="ln"><span class="no">2</span><span class="tx">t = turtle</span></span><span class="ln"><span class="no">3</span><span class="tx">t.speed(0)</span></span><span class="ln"><span class="no">4</span><span class="tx">t.pensize(3)</span></span></div>
+   
+  </div>
+  <div>
+   <div class="lab">Press F5. You should see:</div>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="What your picture looks like after step 1" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/></svg>
+   <p class="fine">Nothing is drawn yet. An empty window is right.</p>
+  </div>
+ </div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
+ <p class="fine">Check: your last line of code should be line 4. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
+</section>
+<section class="card step" id="s2">
+ <h2><span class="num">2</span>The back box</h2>
+ <p>A big red rectangle. Top left is -230, 40.</p>
+ <div class="stepgrid">
+  <div>
+   <div class="new"><b>New idea (just read this, do not type it):</b><ul class="tight"><li><code>t.fillcolor(&quot;red&quot;)</code> &nbsp;Picks the colour to fill the next shape with.</li><li><code>t.begin_fill()  and  t.end_fill()</code> &nbsp;Everything drawn between these two lines gets filled with colour.</li></ul></div>
+   <div class="lab">Type these 11 lines at the end of your file (lines 5 to 15):</div>
+   <div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="no">5</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">6</span><span class="tx">t.goto(-230, 40)</span></span><span class="ln"><span class="no">7</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">8</span><span class="tx">t.fillcolor(&quot;red&quot;)</span></span><span class="ln"><span class="no">9</span><span class="tx">t.begin_fill()</span></span><span class="ln"><span class="no">10</span><span class="tx">for i in range(2):</span></span><span class="ln"><span class="no">11</span><span class="ind"></span><span class="tx">t.forward(230)</span></span><span class="ln"><span class="no">12</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">13</span><span class="ind"></span><span class="tx">t.forward(100)</span></span><span class="ln"><span class="no">14</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">15</span><span class="tx">t.end_fill()</span></span></div>
+   <div class="rule">Each <span style="border-left:3px solid var(--bar);padding-left:6px">bar</span> is one indent. IDLE adds one for you when you press Enter after a colon. Do <b>not</b> type the spaces. Press <b>Backspace</b> to remove a bar.</div>
+  </div>
+  <div>
+   <div class="lab">Press F5. You should see:</div>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="What your picture looks like after step 2" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/><polygon points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <p class="fine">The bright part is new. The faded part was there before.</p>
+  </div>
+ </div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
+ <p class="fine">Check: your last line of code should be line 15. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
+</section>
+<section class="card step" id="s3">
+ <h2><span class="num">3</span>The cab</h2>
+ <p>The driver&#x27;s cab is taller. Top left is 0, 70.</p>
+ <div class="stepgrid">
+  <div>
+   
+   <div class="lab">Type these 11 lines at the end of your file (lines 16 to 26):</div>
+   <div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="no">16</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">17</span><span class="tx">t.goto(0, 70)</span></span><span class="ln"><span class="no">18</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">19</span><span class="tx">t.fillcolor(&quot;red&quot;)</span></span><span class="ln"><span class="no">20</span><span class="tx">t.begin_fill()</span></span><span class="ln"><span class="no">21</span><span class="tx">for i in range(2):</span></span><span class="ln"><span class="no">22</span><span class="ind"></span><span class="tx">t.forward(110)</span></span><span class="ln"><span class="no">23</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">24</span><span class="ind"></span><span class="tx">t.forward(130)</span></span><span class="ln"><span class="no">25</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">26</span><span class="tx">t.end_fill()</span></span></div>
+   <div class="rule">Each <span style="border-left:3px solid var(--bar);padding-left:6px">bar</span> is one indent. IDLE adds one for you when you press Enter after a colon. Do <b>not</b> type the spaces. Press <b>Backspace</b> to remove a bar.</div>
+  </div>
+  <div>
+   <div class="lab">Press F5. You should see:</div>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="What your picture looks like after step 3" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/><polygon class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <p class="fine">The bright part is new. The faded part was there before.</p>
+  </div>
+ </div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
+ <p class="fine">Check: your last line of code should be line 26. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
+</section>
+<section class="card step" id="s4">
+ <h2><span class="num">4</span>The cab window</h2>
+ <p>A light blue rectangle inside the cab.</p>
+ <div class="stepgrid">
+  <div>
+   
+   <div class="lab">Type these 11 lines at the end of your file (lines 27 to 37):</div>
+   <div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="no">27</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">28</span><span class="tx">t.goto(15, 55)</span></span><span class="ln"><span class="no">29</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">30</span><span class="tx">t.fillcolor(&quot;lightblue&quot;)</span></span><span class="ln"><span class="no">31</span><span class="tx">t.begin_fill()</span></span><span class="ln"><span class="no">32</span><span class="tx">for i in range(2):</span></span><span class="ln"><span class="no">33</span><span class="ind"></span><span class="tx">t.forward(80)</span></span><span class="ln"><span class="no">34</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">35</span><span class="ind"></span><span class="tx">t.forward(50)</span></span><span class="ln"><span class="no">36</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">37</span><span class="tx">t.end_fill()</span></span></div>
+   <div class="rule">Each <span style="border-left:3px solid var(--bar);padding-left:6px">bar</span> is one indent. IDLE adds one for you when you press Enter after a colon. Do <b>not</b> type the spaces. Press <b>Backspace</b> to remove a bar.</div>
+  </div>
+  <div>
+   <div class="lab">Press F5. You should see:</div>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="What your picture looks like after step 4" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/><polygon class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="lightblue" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <p class="fine">The bright part is new. The faded part was there before.</p>
+  </div>
+ </div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
+ <p class="fine">Check: your last line of code should be line 37. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
+</section>
+<section class="card step" id="s5">
+ <h2><span class="num">5</span>The door line</h2>
+ <p>A line down from the window.</p>
+ <div class="stepgrid">
+  <div>
+   
+   <div class="lab">Type these 4 lines at the end of your file (lines 38 to 41):</div>
+   <div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="no">38</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">39</span><span class="tx">t.goto(55, 5)</span></span><span class="ln"><span class="no">40</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">41</span><span class="tx">t.goto(55, -60)</span></span></div>
+   
+  </div>
+  <div>
+   <div class="lab">Press F5. You should see:</div>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="What your picture looks like after step 5" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/><polygon class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="lightblue" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="55.0,-5.0 55.0,60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <p class="fine">The bright part is new. The faded part was there before.</p>
+  </div>
+ </div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
+ <p class="fine">Check: your last line of code should be line 41. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
+</section>
+<section class="card step" id="s6">
+ <h2><span class="num">6</span>The bumper</h2>
+ <p>A small grey rectangle at the front.</p>
+ <div class="stepgrid">
+  <div>
+   
+   <div class="lab">Type these 11 lines at the end of your file (lines 42 to 52):</div>
+   <div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="no">42</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">43</span><span class="tx">t.goto(110, -40)</span></span><span class="ln"><span class="no">44</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">45</span><span class="tx">t.fillcolor(&quot;darkgrey&quot;)</span></span><span class="ln"><span class="no">46</span><span class="tx">t.begin_fill()</span></span><span class="ln"><span class="no">47</span><span class="tx">for i in range(2):</span></span><span class="ln"><span class="no">48</span><span class="ind"></span><span class="tx">t.forward(18)</span></span><span class="ln"><span class="no">49</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">50</span><span class="ind"></span><span class="tx">t.forward(20)</span></span><span class="ln"><span class="no">51</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">52</span><span class="tx">t.end_fill()</span></span></div>
+   <div class="rule">Each <span style="border-left:3px solid var(--bar);padding-left:6px">bar</span> is one indent. IDLE adds one for you when you press Enter after a colon. Do <b>not</b> type the spaces. Press <b>Backspace</b> to remove a bar.</div>
+  </div>
+  <div>
+   <div class="lab">Press F5. You should see:</div>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="What your picture looks like after step 6" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/><polygon class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="lightblue" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="55.0,-5.0 55.0,60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="darkgrey" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <p class="fine">The bright part is new. The faded part was there before.</p>
+  </div>
+ </div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
+ <p class="fine">Check: your last line of code should be line 52. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
+</section>
+<section class="card step" id="s7">
+ <h2><span class="num">7</span>The ladder</h2>
+ <p>A silver rectangle on top of the box.</p>
+ <div class="stepgrid">
+  <div>
+   
+   <div class="lab">Type these 11 lines at the end of your file (lines 53 to 63):</div>
+   <div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="no">53</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">54</span><span class="tx">t.goto(-210, 60)</span></span><span class="ln"><span class="no">55</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">56</span><span class="tx">t.fillcolor(&quot;silver&quot;)</span></span><span class="ln"><span class="no">57</span><span class="tx">t.begin_fill()</span></span><span class="ln"><span class="no">58</span><span class="tx">for i in range(2):</span></span><span class="ln"><span class="no">59</span><span class="ind"></span><span class="tx">t.forward(190)</span></span><span class="ln"><span class="no">60</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">61</span><span class="ind"></span><span class="tx">t.forward(20)</span></span><span class="ln"><span class="no">62</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">63</span><span class="tx">t.end_fill()</span></span></div>
+   <div class="rule">Each <span style="border-left:3px solid var(--bar);padding-left:6px">bar</span> is one indent. IDLE adds one for you when you press Enter after a colon. Do <b>not</b> type the spaces. Press <b>Backspace</b> to remove a bar.</div>
+  </div>
+  <div>
+   <div class="lab">Press F5. You should see:</div>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="What your picture looks like after step 7" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/><polygon class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="lightblue" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="55.0,-5.0 55.0,60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="darkgrey" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="silver" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <p class="fine">The bright part is new. The faded part was there before.</p>
+  </div>
+ </div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
+ <p class="fine">Check: your last line of code should be line 63. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
+</section>
+<section class="card step" id="s8">
+ <h2><span class="num">8</span>The ladder rungs</h2>
+ <p>A loop draws nine short lines. i changes the x each time.</p>
+ <div class="stepgrid">
+  <div>
+   <div class="new"><b>New idea (just read this, do not type it):</b><ul class="tight"><li><code>-130 + i * 40</code> &nbsp;i counts 0, 1, 2 ... so this moves each window 40 further along.</li></ul></div>
+   <div class="lab">Type these 5 lines at the end of your file (lines 64 to 68):</div>
+   <div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="no">64</span><span class="tx">for i in range(9):</span></span><span class="ln"><span class="no">65</span><span class="ind"></span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">66</span><span class="ind"></span><span class="tx">t.goto(-200 + i * 20, 60)</span></span><span class="ln"><span class="no">67</span><span class="ind"></span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">68</span><span class="ind"></span><span class="tx">t.goto(-200 + i * 20, 40)</span></span></div>
+   <div class="rule">Each <span style="border-left:3px solid var(--bar);padding-left:6px">bar</span> is one indent. IDLE adds one for you when you press Enter after a colon. Do <b>not</b> type the spaces. Press <b>Backspace</b> to remove a bar.</div>
+  </div>
+  <div>
+   <div class="lab">Press F5. You should see:</div>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="What your picture looks like after step 8" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/><polygon class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="lightblue" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="55.0,-5.0 55.0,60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="darkgrey" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="silver" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-200.0,-60.0 -200.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-180.0,-60.0 -180.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-160.0,-60.0 -160.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-140.0,-60.0 -140.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-120.0,-60.0 -120.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-100.0,-60.0 -100.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-80.0,-60.0 -80.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-60.0,-60.0 -60.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline points="-40.0,-60.0 -40.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <p class="fine">The bright part is new. The faded part was there before.</p>
+  </div>
+ </div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
+ <p class="fine">Check: your last line of code should be line 68. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
+</section>
+<section class="card step" id="s9">
+ <h2><span class="num">9</span>The siren</h2>
+ <p>A blue dot on the cab roof.</p>
+ <div class="stepgrid">
+  <div>
+   
+   <div class="lab">Type these 3 lines at the end of your file (lines 69 to 71):</div>
+   <div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="no">69</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">70</span><span class="tx">t.goto(55, 80)</span></span><span class="ln"><span class="no">71</span><span class="tx">t.dot(24, &quot;blue&quot;)</span></span></div>
+   <div class="rule">Your cursor is still inside a loop. Press <b>Backspace</b> once to go back to the left edge before you type.</div>
+  </div>
+  <div>
+   <div class="lab">Press F5. You should see:</div>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="What your picture looks like after step 9" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/><polygon class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="lightblue" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="55.0,-5.0 55.0,60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="darkgrey" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="silver" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-200.0,-60.0 -200.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-180.0,-60.0 -180.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-160.0,-60.0 -160.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-140.0,-60.0 -140.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-120.0,-60.0 -120.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-100.0,-60.0 -100.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-80.0,-60.0 -80.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-60.0,-60.0 -60.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-40.0,-60.0 -40.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><circle cx="55.0" cy="-80.0" r="12.0" fill="blue"/></svg>
+   <p class="fine">The bright part is new. The faded part was there before.</p>
+  </div>
+ </div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
+ <p class="fine">Check: your last line of code should be line 71. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
+</section>
+<section class="card step" id="s10">
+ <h2><span class="num">10</span>The wheels</h2>
+ <p>Three big black dots with grey hubs on top.</p>
+ <div class="stepgrid">
+  <div>
+   
+   <div class="lab">Type these 13 lines at the end of your file (lines 72 to 84):</div>
+   <div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="no">72</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">73</span><span class="tx">t.goto(-150, -80)</span></span><span class="ln"><span class="no">74</span><span class="tx">t.dot(60, &quot;black&quot;)</span></span><span class="ln"><span class="no">75</span><span class="tx">t.goto(-150, -80)</span></span><span class="ln"><span class="no">76</span><span class="tx">t.dot(28, &quot;lightgrey&quot;)</span></span><span class="ln"><span class="no">77</span><span class="tx">t.goto(-50, -80)</span></span><span class="ln"><span class="no">78</span><span class="tx">t.dot(60, &quot;black&quot;)</span></span><span class="ln"><span class="no">79</span><span class="tx">t.goto(-50, -80)</span></span><span class="ln"><span class="no">80</span><span class="tx">t.dot(28, &quot;lightgrey&quot;)</span></span><span class="ln"><span class="no">81</span><span class="tx">t.goto(70, -80)</span></span><span class="ln"><span class="no">82</span><span class="tx">t.dot(60, &quot;black&quot;)</span></span><span class="ln"><span class="no">83</span><span class="tx">t.goto(70, -80)</span></span><span class="ln"><span class="no">84</span><span class="tx">t.dot(28, &quot;lightgrey&quot;)</span></span></div>
+   
+  </div>
+  <div>
+   <div class="lab">Press F5. You should see:</div>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="What your picture looks like after step 10" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/><polygon class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="lightblue" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="55.0,-5.0 55.0,60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="darkgrey" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="silver" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-200.0,-60.0 -200.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-180.0,-60.0 -180.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-160.0,-60.0 -160.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-140.0,-60.0 -140.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-120.0,-60.0 -120.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-100.0,-60.0 -100.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-80.0,-60.0 -80.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-60.0,-60.0 -60.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-40.0,-60.0 -40.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><circle class="old" cx="55.0" cy="-80.0" r="12.0" fill="blue"/><circle cx="-150.0" cy="80.0" r="30.0" fill="black"/><circle cx="-150.0" cy="80.0" r="14.0" fill="lightgrey"/><circle cx="-50.0" cy="80.0" r="30.0" fill="black"/><circle cx="-50.0" cy="80.0" r="14.0" fill="lightgrey"/><circle cx="70.0" cy="80.0" r="30.0" fill="black"/><circle cx="70.0" cy="80.0" r="14.0" fill="lightgrey"/></svg>
+   <p class="fine">The bright part is new. The faded part was there before.</p>
+  </div>
+ </div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
+ <p class="fine">Check: your last line of code should be line 84. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
+</section>
+<section class="card step" id="s11">
+ <h2><span class="num">11</span>The word FIRE</h2>
+ <p>Write it in white on the red box.</p>
+ <div class="stepgrid">
+  <div>
+   <div class="new"><b>New idea (just read this, do not type it):</b><ul class="tight"><li><code>t.write(&quot;FIRE&quot;, font=(&quot;Arial&quot;, 28, &quot;bold&quot;))</code> &nbsp;Writes words on the screen. The font is the style and size of the letters.</li></ul></div>
+   <div class="lab">Type these 4 lines at the end of your file (lines 85 to 88):</div>
+   <div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="no">85</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">86</span><span class="tx">t.goto(-190, -25)</span></span><span class="ln"><span class="no">87</span><span class="tx">t.pencolor(&quot;white&quot;)</span></span><span class="ln"><span class="no">88</span><span class="tx">t.write(&quot;FIRE&quot;, font=(&quot;Arial&quot;, 28, &quot;bold&quot;))</span></span></div>
+   
+  </div>
+  <div>
+   <div class="lab">Press F5. You should see:</div>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="What your picture looks like after step 11" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/><polygon class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="lightblue" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="55.0,-5.0 55.0,60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="darkgrey" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="silver" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-200.0,-60.0 -200.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-180.0,-60.0 -180.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-160.0,-60.0 -160.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-140.0,-60.0 -140.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-120.0,-60.0 -120.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-100.0,-60.0 -100.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-80.0,-60.0 -80.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-60.0,-60.0 -60.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-40.0,-60.0 -40.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><circle class="old" cx="55.0" cy="-80.0" r="12.0" fill="blue"/><circle class="old" cx="-150.0" cy="80.0" r="30.0" fill="black"/><circle class="old" cx="-150.0" cy="80.0" r="14.0" fill="lightgrey"/><circle class="old" cx="-50.0" cy="80.0" r="30.0" fill="black"/><circle class="old" cx="-50.0" cy="80.0" r="14.0" fill="lightgrey"/><circle class="old" cx="70.0" cy="80.0" r="30.0" fill="black"/><circle class="old" cx="70.0" cy="80.0" r="14.0" fill="lightgrey"/><text x="-191.0" y="16.788719999999998" font-family="Arial, Arial, sans-serif" font-size="37.3" font-weight="bold" fill="white">FIRE</text></svg>
+   <p class="fine">The bright part is new. The faded part was there before.</p>
+  </div>
+ </div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
+ <p class="fine">Check: your last line of code should be line 88. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
+</section>
+<section class="card step" id="s12">
+ <h2><span class="num">12</span>The road</h2>
+ <p>A thick grey line under the wheels.</p>
+ <div class="stepgrid">
+  <div>
+   
+   <div class="lab">Type these 6 lines at the end of your file (lines 89 to 94):</div>
+   <div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="no">89</span><span class="tx">t.pensize(6)</span></span><span class="ln"><span class="no">90</span><span class="tx">t.pencolor(&quot;grey&quot;)</span></span><span class="ln"><span class="no">91</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">92</span><span class="tx">t.goto(-260, -110)</span></span><span class="ln"><span class="no">93</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">94</span><span class="tx">t.goto(260, -110)</span></span></div>
+   
+  </div>
+  <div>
+   <div class="lab">Press F5. You should see:</div>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="What your picture looks like after step 12" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/><polygon class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="lightblue" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="55.0,-5.0 55.0,60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="darkgrey" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="silver" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-200.0,-60.0 -200.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-180.0,-60.0 -180.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-160.0,-60.0 -160.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-140.0,-60.0 -140.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-120.0,-60.0 -120.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-100.0,-60.0 -100.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-80.0,-60.0 -80.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-60.0,-60.0 -60.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-40.0,-60.0 -40.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><circle class="old" cx="55.0" cy="-80.0" r="12.0" fill="blue"/><circle class="old" cx="-150.0" cy="80.0" r="30.0" fill="black"/><circle class="old" cx="-150.0" cy="80.0" r="14.0" fill="lightgrey"/><circle class="old" cx="-50.0" cy="80.0" r="30.0" fill="black"/><circle class="old" cx="-50.0" cy="80.0" r="14.0" fill="lightgrey"/><circle class="old" cx="70.0" cy="80.0" r="30.0" fill="black"/><circle class="old" cx="70.0" cy="80.0" r="14.0" fill="lightgrey"/><text class="old" x="-191.0" y="16.788719999999998" font-family="Arial, Arial, sans-serif" font-size="37.3" font-weight="bold" fill="white">FIRE</text><polyline points="-260.0,110.0 260.0,110.0" fill="none" stroke="grey" stroke-width="6.0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <p class="fine">The bright part is new. The faded part was there before.</p>
+  </div>
+ </div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
+ <p class="fine">Check: your last line of code should be line 94. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
+</section>
+<section class="card step" id="s13">
+ <h2><span class="num">13</span>Tidy up</h2>
+ <p>Hide the arrow.</p>
+ <div class="stepgrid">
+  <div>
+   <div class="new"><b>New idea (just read this, do not type it):</b><ul class="tight"><li><code>t.hideturtle()</code> &nbsp;Hides the arrow so your picture looks neat.</li></ul></div>
+   <div class="lab">Type this line at the end of your file (lines 95):</div>
+   <div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="no">95</span><span class="tx">t.hideturtle()</span></span></div>
+   
+  </div>
+  <div>
+   <div class="lab">Press F5. You should see:</div>
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="-300 -215 600 430" role="img" aria-label="What your picture looks like after step 13" class="pic"><rect x="-300" y="-215" width="600" height="430" fill="white"/><polygon class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-230.0,-40.0 0.0,-40.0 0.0,60.0 -230.0,60.0 -230.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="red" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="0.0,-70.0 110.0,-70.0 110.0,60.0 0.0,60.0 -0.0,-70.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="lightblue" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="15.0,-55.0 95.0,-55.0 95.0,-5.0 15.0,-5.0 15.0,-55.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="55.0,-5.0 55.0,60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="darkgrey" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="110.0,40.0 128.0,40.0 128.0,60.0 110.0,60.0 110.0,40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polygon class="old" points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="silver" stroke="" stroke-width="1.0" stroke-linejoin="round"/><polyline class="old" points="-210.0,-60.0 -20.0,-60.0 -20.0,-40.0 -210.0,-40.0 -210.0,-60.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-200.0,-60.0 -200.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-180.0,-60.0 -180.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-160.0,-60.0 -160.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-140.0,-60.0 -140.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-120.0,-60.0 -120.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-100.0,-60.0 -100.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-80.0,-60.0 -80.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-60.0,-60.0 -60.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><polyline class="old" points="-40.0,-60.0 -40.0,-40.0" fill="none" stroke="black" stroke-width="3.0" stroke-linecap="round" stroke-linejoin="round"/><circle class="old" cx="55.0" cy="-80.0" r="12.0" fill="blue"/><circle class="old" cx="-150.0" cy="80.0" r="30.0" fill="black"/><circle class="old" cx="-150.0" cy="80.0" r="14.0" fill="lightgrey"/><circle class="old" cx="-50.0" cy="80.0" r="30.0" fill="black"/><circle class="old" cx="-50.0" cy="80.0" r="14.0" fill="lightgrey"/><circle class="old" cx="70.0" cy="80.0" r="30.0" fill="black"/><circle class="old" cx="70.0" cy="80.0" r="14.0" fill="lightgrey"/><text class="old" x="-191.0" y="16.788719999999998" font-family="Arial, Arial, sans-serif" font-size="37.3" font-weight="bold" fill="white">FIRE</text><polyline class="old" points="-260.0,110.0 260.0,110.0" fill="none" stroke="grey" stroke-width="6.0" stroke-linecap="round" stroke-linejoin="round"/></svg>
+   <p class="fine">The bright part is new. The faded part was there before.</p>
+  </div>
+ </div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
+ <p class="fine">Check: your last line of code should be line 95. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
+</section>
+<div class="finish" role="status"><b>You did it!</b> Save the file (Ctrl and S), press F5, and call your teacher to see the picture on your screen. That is <b>5 ICE (positive) points, guaranteed</b>.</div>
+<section class="card">
+ <h2>Challenge (if you finish early)</h2>
+ <p>Add a hose reel, a second siren light or a firefighter&#x27;s helmet in the window.</p>
+</section>
+<section class="card">
+ <details>
+  <summary>Teacher check: the whole program (for marking and debugging only)</summary>
+  <p class="fine">95 lines. Selecting and copying is switched off here too.</p>
+  <div class="code"><span class="ln"><span class="no">1</span><span class="tx">import turtle</span></span><span class="ln"><span class="no">2</span><span class="tx">t = turtle</span></span><span class="ln"><span class="no">3</span><span class="tx">t.speed(0)</span></span><span class="ln"><span class="no">4</span><span class="tx">t.pensize(3)</span></span><span class="ln"><span class="no">5</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">6</span><span class="tx">t.goto(-230, 40)</span></span><span class="ln"><span class="no">7</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">8</span><span class="tx">t.fillcolor(&quot;red&quot;)</span></span><span class="ln"><span class="no">9</span><span class="tx">t.begin_fill()</span></span><span class="ln"><span class="no">10</span><span class="tx">for i in range(2):</span></span><span class="ln"><span class="no">11</span><span class="ind"></span><span class="tx">t.forward(230)</span></span><span class="ln"><span class="no">12</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">13</span><span class="ind"></span><span class="tx">t.forward(100)</span></span><span class="ln"><span class="no">14</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">15</span><span class="tx">t.end_fill()</span></span><span class="ln"><span class="no">16</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">17</span><span class="tx">t.goto(0, 70)</span></span><span class="ln"><span class="no">18</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">19</span><span class="tx">t.fillcolor(&quot;red&quot;)</span></span><span class="ln"><span class="no">20</span><span class="tx">t.begin_fill()</span></span><span class="ln"><span class="no">21</span><span class="tx">for i in range(2):</span></span><span class="ln"><span class="no">22</span><span class="ind"></span><span class="tx">t.forward(110)</span></span><span class="ln"><span class="no">23</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">24</span><span class="ind"></span><span class="tx">t.forward(130)</span></span><span class="ln"><span class="no">25</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">26</span><span class="tx">t.end_fill()</span></span><span class="ln"><span class="no">27</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">28</span><span class="tx">t.goto(15, 55)</span></span><span class="ln"><span class="no">29</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">30</span><span class="tx">t.fillcolor(&quot;lightblue&quot;)</span></span><span class="ln"><span class="no">31</span><span class="tx">t.begin_fill()</span></span><span class="ln"><span class="no">32</span><span class="tx">for i in range(2):</span></span><span class="ln"><span class="no">33</span><span class="ind"></span><span class="tx">t.forward(80)</span></span><span class="ln"><span class="no">34</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">35</span><span class="ind"></span><span class="tx">t.forward(50)</span></span><span class="ln"><span class="no">36</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">37</span><span class="tx">t.end_fill()</span></span><span class="ln"><span class="no">38</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">39</span><span class="tx">t.goto(55, 5)</span></span><span class="ln"><span class="no">40</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">41</span><span class="tx">t.goto(55, -60)</span></span><span class="ln"><span class="no">42</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">43</span><span class="tx">t.goto(110, -40)</span></span><span class="ln"><span class="no">44</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">45</span><span class="tx">t.fillcolor(&quot;darkgrey&quot;)</span></span><span class="ln"><span class="no">46</span><span class="tx">t.begin_fill()</span></span><span class="ln"><span class="no">47</span><span class="tx">for i in range(2):</span></span><span class="ln"><span class="no">48</span><span class="ind"></span><span class="tx">t.forward(18)</span></span><span class="ln"><span class="no">49</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">50</span><span class="ind"></span><span class="tx">t.forward(20)</span></span><span class="ln"><span class="no">51</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">52</span><span class="tx">t.end_fill()</span></span><span class="ln"><span class="no">53</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">54</span><span class="tx">t.goto(-210, 60)</span></span><span class="ln"><span class="no">55</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">56</span><span class="tx">t.fillcolor(&quot;silver&quot;)</span></span><span class="ln"><span class="no">57</span><span class="tx">t.begin_fill()</span></span><span class="ln"><span class="no">58</span><span class="tx">for i in range(2):</span></span><span class="ln"><span class="no">59</span><span class="ind"></span><span class="tx">t.forward(190)</span></span><span class="ln"><span class="no">60</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">61</span><span class="ind"></span><span class="tx">t.forward(20)</span></span><span class="ln"><span class="no">62</span><span class="ind"></span><span class="tx">t.right(90)</span></span><span class="ln"><span class="no">63</span><span class="tx">t.end_fill()</span></span><span class="ln"><span class="no">64</span><span class="tx">for i in range(9):</span></span><span class="ln"><span class="no">65</span><span class="ind"></span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">66</span><span class="ind"></span><span class="tx">t.goto(-200 + i * 20, 60)</span></span><span class="ln"><span class="no">67</span><span class="ind"></span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">68</span><span class="ind"></span><span class="tx">t.goto(-200 + i * 20, 40)</span></span><span class="ln"><span class="no">69</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">70</span><span class="tx">t.goto(55, 80)</span></span><span class="ln"><span class="no">71</span><span class="tx">t.dot(24, &quot;blue&quot;)</span></span><span class="ln"><span class="no">72</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">73</span><span class="tx">t.goto(-150, -80)</span></span><span class="ln"><span class="no">74</span><span class="tx">t.dot(60, &quot;black&quot;)</span></span><span class="ln"><span class="no">75</span><span class="tx">t.goto(-150, -80)</span></span><span class="ln"><span class="no">76</span><span class="tx">t.dot(28, &quot;lightgrey&quot;)</span></span><span class="ln"><span class="no">77</span><span class="tx">t.goto(-50, -80)</span></span><span class="ln"><span class="no">78</span><span class="tx">t.dot(60, &quot;black&quot;)</span></span><span class="ln"><span class="no">79</span><span class="tx">t.goto(-50, -80)</span></span><span class="ln"><span class="no">80</span><span class="tx">t.dot(28, &quot;lightgrey&quot;)</span></span><span class="ln"><span class="no">81</span><span class="tx">t.goto(70, -80)</span></span><span class="ln"><span class="no">82</span><span class="tx">t.dot(60, &quot;black&quot;)</span></span><span class="ln"><span class="no">83</span><span class="tx">t.goto(70, -80)</span></span><span class="ln"><span class="no">84</span><span class="tx">t.dot(28, &quot;lightgrey&quot;)</span></span><span class="ln"><span class="no">85</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">86</span><span class="tx">t.goto(-190, -25)</span></span><span class="ln"><span class="no">87</span><span class="tx">t.pencolor(&quot;white&quot;)</span></span><span class="ln"><span class="no">88</span><span class="tx">t.write(&quot;FIRE&quot;, font=(&quot;Arial&quot;, 28, &quot;bold&quot;))</span></span><span class="ln"><span class="no">89</span><span class="tx">t.pensize(6)</span></span><span class="ln"><span class="no">90</span><span class="tx">t.pencolor(&quot;grey&quot;)</span></span><span class="ln"><span class="no">91</span><span class="tx">t.penup()</span></span><span class="ln"><span class="no">92</span><span class="tx">t.goto(-260, -110)</span></span><span class="ln"><span class="no">93</span><span class="tx">t.pendown()</span></span><span class="ln"><span class="no">94</span><span class="tx">t.goto(260, -110)</span></span><span class="ln"><span class="no">95</span><span class="tx">t.hideturtle()</span></span></div>
+ </details>
+</section>
+<nav class="pn"><a href="Rank05_Bear.html">&larr; Rank 5: Bear</a><a href="index.html">All 12 pictures</a><a href="Rank07_Cat.html">Rank 7: Cat &rarr;</a></nav>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+  var KEY='turtle_guide_'+document.body.dataset.key;
+  var steps=[].slice.call(document.querySelectorAll('.step'));
+  var meter=document.querySelector('.meter i');
+  var fin=[].slice.call(document.querySelectorAll('.finish'));
+  var saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
+  function paint(){
+    var n=0;
+    steps.forEach(function(s){var cb=s.querySelector('input');if(cb.checked){n++;s.classList.add('done');}else{s.classList.remove('done');}});
+    meter.style.width=(100*n/steps.length)+'%';
+    document.querySelector('#count').textContent=n+' of '+steps.length+' steps done';
+    fin.forEach(function(f){f.classList.toggle('show',n===steps.length);});
+  }
+  steps.forEach(function(s,i){
+    var cb=s.querySelector('input');
+    cb.checked=!!saved[i];
+    cb.addEventListener('change',function(){
+      saved[i]=cb.checked;
+      try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(e){}
+      paint();
+      if(cb.checked&&steps[i+1]){steps[i+1].scrollIntoView({behavior:'smooth',block:'start'});}
+    });
+  });
+  paint();
+  var toast=document.getElementById('toast'),tm;
+  function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){toast.classList.remove('on');},2200);}
+  ['copy','cut','dragstart','selectstart','contextmenu'].forEach(function(ev){
+    document.querySelectorAll('.code').forEach(function(c){
+      c.addEventListener(ev,function(e){e.preventDefault();say('Type it yourself! Copying is switched off on purpose.');});
+    });
+  });
+  document.addEventListener('copy',function(e){
+    var s=String(window.getSelection());
+    if(s&&s.length>0){e.preventDefault();say('Type it yourself! Copying is switched off on purpose.');}
+  });
+})();
+</script>
+</body>
+</html>
