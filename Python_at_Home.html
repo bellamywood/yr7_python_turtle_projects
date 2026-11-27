@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Python at Home - Setup Guide</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#17223b;--muted:#4a5568;--line:#b8c0cc;--blue:#1d4ed8;--blueb:#dbeafe;
+--green:#007344;--greenb:#e6f2ec;--amber:#8a4300;--amberb:#fef3c7;--red:#b91c1c;--redb:#fee2e2;--code:#fffef8;
+--gold:#b8860b;--goldb:#fff3bf;--bar:#c2410c}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1524;--card:#18213a;--ink:#e8ecf7;--muted:#aab4cc;
+--line:#2f3b5d;--blue:#8fb3ff;--blueb:#1b2a55;--green:#5fd39c;--greenb:#10332a;--amber:#f0b45a;--amberb:#3a2f12;--red:#ff9b9b;
+--redb:#3d1a1a;--code:#0c1220;--gold:#ffd966;--goldb:#3d3210;--bar:#ffa56b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.55 Arial,Helvetica,sans-serif}
+header{background:var(--hd,#007344);color:#fff;padding:14px 20px}
+header .top{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between}
+header h1{margin:0;font-size:1.7rem}
+header .sub{opacity:.95;font-size:.95rem}
+.badge{display:inline-block;font-weight:bold;border:2px solid #fff;border-radius:99px;padding:1px 12px;margin-right:6px}
+.meter{background:rgba(255,255,255,.3);border-radius:99px;height:14px;width:220px;overflow:hidden}
+.meter i{display:block;height:100%;background:#fff;width:0;transition:width .3s}
+main{max-width:1180px;margin:0 auto;padding:16px}
+.ice{background:var(--goldb);border:3px solid var(--gold);border-radius:14px;padding:12px 16px;margin:0 0 16px;font-size:1.1rem}
+.ice b{font-size:1.25rem}
+.ice.none{background:var(--blueb);border-color:var(--blue)}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 16px}
+.card h2{margin:0 0 6px;font-size:1.3rem}
+.hero{display:grid;grid-template-columns:minmax(260px,1fr) minmax(280px,1.1fr);gap:16px;align-items:center}
+@media (max-width:820px){.hero,.stepgrid{grid-template-columns:1fr!important}}
+svg.pic{width:100%;height:auto;border:2px solid var(--line);border-radius:10px;display:block;background:#fff}
+svg.pic .old{opacity:.35}
+ul.tight{margin:6px 0;padding-left:22px}
+ul.tight li{margin:3px 0}
+.rule{background:var(--amberb);border-left:6px solid var(--amber);border-radius:8px;padding:8px 12px;margin:8px 0}
+.new{background:var(--greenb);border-left:6px solid var(--green);border-radius:8px;padding:6px 12px;margin:8px 0}
+.new b{color:var(--green)}
+.new code,.rule code,li code,p code{font-family:ui-monospace,Consolas,"DejaVu Sans Mono",monospace;background:rgba(0,0,0,.07);padding:0 4px;border-radius:4px;font-size:.92em}
+.step{scroll-margin-top:12px}
+.step.done{border-color:var(--green);background:linear-gradient(0deg,var(--greenb),var(--card) 30%)}
+.step h2 .num{display:inline-block;background:var(--blue);color:#fff;border-radius:99px;min-width:2em;text-align:center;margin-right:8px;padding:0 8px}
+.step.done h2 .num{background:var(--green)}
+.stepgrid{display:grid;grid-template-columns:minmax(300px,1.15fr) minmax(260px,1fr);gap:16px;align-items:start}
+.lab{font-weight:bold;color:var(--blue);margin:10px 0 2px}
+.code{background:var(--code);border:2px solid var(--ink);border-radius:10px;padding:10px 6px;
+font:20px/1.55 ui-monospace,Consolas,"DejaVu Sans Mono",monospace;font-variant-ligatures:none;
+overflow-x:auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:default}
+.ln{display:flex;white-space:pre}
+.no{flex:none;width:2.8em;text-align:right;padding-right:.9em;color:var(--muted);font-size:.85em}
+.ind{flex:none;display:inline-block;width:4ch;border-left:3px solid var(--bar);margin-left:.1ch;opacity:.8}
+.tx{white-space:pre}
+.fine{color:var(--muted);font-size:.92rem}
+.chk{display:flex;gap:10px;align-items:center;margin-top:12px;font-weight:bold;cursor:pointer}
+.chk input{width:26px;height:26px;accent-color:var(--green)}
+.finish{display:none;background:var(--greenb);border:3px solid var(--green);border-radius:14px;padding:14px 18px;margin:0 0 16px;font-size:1.15rem}
+.finish.show{display:block}
+details{margin:10px 0}
+summary{cursor:pointer;font-weight:bold}
+summary:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+nav.pn{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:10px 0}
+nav.pn a,a.btn{background:var(--blue);color:#fff;text-decoration:none;font-weight:bold;border-radius:10px;padding:8px 14px;display:inline-block}
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#17223b;color:#fff;padding:10px 18px;border-radius:10px;
+font-weight:bold;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9}
+#toast.on{opacity:1}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--blueb)}
+td svg.pic{width:150px}
+td a{color:var(--blue);font-size:1.05rem}
+.lv-Easy{--hd:#007344}.lv-Medium{--hd:#a15c00}.lv-Hard{--hd:#9f1239}
+.tag{display:inline-block;font-size:.82rem;font-weight:bold;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin:2px 3px 0 0}
+@media print{.chk,#toast{display:none}}
+
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
+.tabs button{font:inherit;font-weight:bold;border:3px solid var(--blue);background:var(--card);color:var(--blue);border-radius:12px;padding:8px 20px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--blue);color:#fff}
+.tabs button:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+.panel[hidden]{display:none}
+ol.steps{padding-left:0;list-style:none;counter-reset:s;margin:8px 0}
+ol.steps li{counter-increment:s;position:relative;padding:8px 10px 8px 54px;margin:8px 0;background:var(--card);border:2px solid var(--line);border-radius:12px}
+ol.steps li::before{content:counter(s);position:absolute;left:10px;top:8px;width:34px;height:34px;border-radius:50%;background:var(--green);color:#fff;font-weight:bold;text-align:center;line-height:34px}
+.cmd{display:block;font-family:ui-monospace,Consolas,"DejaVu Sans Mono",monospace;background:var(--code);border:2px solid var(--ink);border-radius:8px;padding:6px 10px;margin:6px 0;overflow-x:auto;white-space:pre;font-size:.95em}
+.codebox{background:var(--code);border:2px solid var(--ink);border-radius:10px;padding:10px 14px;font:20px/1.55 ui-monospace,Consolas,"DejaVu Sans Mono",monospace;white-space:pre;overflow-x:auto}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:760px){.two{grid-template-columns:1fr}}
+.warn{background:var(--redb);border-left:6px solid var(--red);border-radius:8px;padding:8px 12px;margin:8px 0}
+.ok{background:var(--greenb);border-left:6px solid var(--green);border-radius:8px;padding:8px 12px;margin:8px 0}
+td.y{color:var(--green);font-weight:bold}
+td.n{color:var(--red);font-weight:bold}
+</style>
+</head>
+<body style="--hd:#17223b">
+<header><div class="top"><div><h1>Coding Python at home</h1>
+<div class="sub">A guide for parents and pupils. Free software. No account needed to install it.</div></div>
+<a class="btn" href="index.html">Python Turtle picture guides</a></div></header>
+<main>
+
+<section class="card">
+ <h2>Two ways to code at home</h2>
+ <div class="two">
+  <div><h3>A. Install Python (best)</h3>
+   <p>This is the same <b>IDLE</b> that we use in school. Your files stay on your own computer. It works with no internet once it is installed.</p>
+   <p class="fine">Works on Windows, Mac and Linux. Needs a computer you are allowed to install programs on.</p>
+   <a class="btn" href="#install">Go to the install steps</a></div>
+  <div><h3>B. Use a website (nothing to install)</h3>
+   <p>Good for Chromebooks, school-managed laptops, or a quick try. You type code in your web browser and the picture appears on the page.</p>
+   <p class="fine">It can be a little different from IDLE. Read the notes on safety first.</p>
+   <a class="btn" href="#online">Go to the online options</a></div>
+ </div>
+</section>
+
+<section class="card">
+ <h2>For parents: before you start</h2>
+ <ul class="tight">
+  <li>Python is <b>free</b>. You never need to pay, and you do not need to give a card number or an email address to install it.</li>
+  <li>Download Python <b>only from python.org</b>, or from your computer's own store or package manager. Do not use other websites that offer "Python downloads".</li>
+  <li>A parent or carer should do the install. It only takes a few minutes.</li>
+  <li>If a website asks for a name, an email address or a date of birth, <b>stop and check the age rules together first</b>. A pupil can do everything in these guides without an account.</li>
+  <li>The school picture guides work the same at home. Type every line yourself. Do not copy and paste: typing is how you learn.</li>
+ </ul>
+</section>
+
+<section class="card" id="install">
+ <h2>A. Install Python</h2>
+ <p>Choose your computer. We have picked the one we think you are using, but you can change it.</p>
+ <div class="tabs" role="tablist" aria-label="Choose your computer">
+  <button role="tab" id="t-win" aria-controls="p-win" aria-selected="true">Windows</button>
+  <button role="tab" id="t-mac" aria-controls="p-mac" aria-selected="false" tabindex="-1">Mac</button>
+  <button role="tab" id="t-lin" aria-controls="p-lin" aria-selected="false" tabindex="-1">Linux</button>
+ </div>
+
+ <div class="panel" id="p-win" role="tabpanel" aria-labelledby="t-win">
+  <h3>Windows 10 or 11</h3>
+  <ol class="steps">
+   <li>Open your web browser and go to <b>python.org/downloads</b>.</li>
+   <li>Click the big yellow <b>Download</b> button for Windows. A file called the <b>Python install manager</b> downloads. <span class="fine">(The Microsoft Store has it too: search for Python install manager and click Install.)</span></li>
+   <li>Open the downloaded file and click <b>Install</b>. You may be asked to add a folder to your PATH. This is <b>optional</b>: you can say no.</li>
+   <li>Wait until it says it has finished. The install manager may ask to install the latest Python runtime. Say <b>yes</b>.</li>
+   <li>Open <b>IDLE</b>: press the Windows key, type <b>IDLE</b> and click it. <b>Cannot find it?</b> Press the Windows key, type <b>cmd</b> and press Enter. In the black window type <span class="cmd">py -m idlelib</span>and press Enter. A window called <b>IDLE Shell</b> opens. This is where Python lives.</li>
+  </ol>
+  <div class="warn"><b>If IDLE still does not open:</b> restart the computer and try again. Still no IDLE? Use the online options below and tell your teacher.</div>
+ </div>
+
+ <div class="panel" id="p-mac" role="tabpanel" aria-labelledby="t-mac" hidden>
+  <h3>Mac</h3>
+  <ol class="steps">
+   <li>Open Safari or Chrome and go to <b>python.org/downloads</b>.</li>
+   <li>Click the yellow <b>Download</b> button for macOS. A file ending in <b>.pkg</b> downloads.</li>
+   <li>Double-click the <b>.pkg</b> file. Click <b>Continue</b> through Read Me and License, then <b>Agree</b> and <b>Install</b>. A parent may need to type the Mac password.</li>
+   <li>When the install finishes, a Python folder window opens. Double-click <b>Install Certificates.command</b> once. A black window opens and closes by itself. This helps Python stay safe online.</li>
+   <li>Open <b>Finder</b>, click <b>Applications</b>, then open the folder called <b>Python 3.15</b> (the number may be a little different). Double-click <b>IDLE</b>. The <b>IDLE Shell</b> window opens.</li>
+  </ol>
+  <div class="ok"><b>Tip:</b> drag IDLE to the Dock so it is easy to find next time.</div>
+ </div>
+
+ <div class="panel" id="p-lin" role="tabpanel" aria-labelledby="t-lin" hidden>
+  <h3>Linux (Ubuntu, Debian, Mint, Raspberry Pi OS)</h3>
+  <p>Most Linux computers already have Python. You need to add <b>IDLE</b> and <b>Tk</b> (the part that draws the turtle window). A parent should type these in a Terminal window.</p>
+  <ol class="steps">
+   <li>Open <b>Terminal</b>. Type this and press Enter. Type your password if asked (nothing shows as you type):<span class="cmd">sudo apt update</span></li>
+   <li>Install Python, IDLE and Tk:<span class="cmd">sudo apt install python3 python3-tk idle3</span></li>
+   <li>Open IDLE by typing this in the Terminal, or find <b>IDLE</b> in your applications menu:<span class="cmd">idle3</span></li>
+  </ol>
+  <p><b>Fedora:</b> <code>sudo dnf install python3 python3-tkinter python3-idle</code>, then run <code>idle3</code> or <code>idle</code>.</p>
+  <div class="ok"><b>Chromebook?</b> Many school Chromebooks have Linux turned off. If yours is your own, turn on <b>Linux development environment</b> in Settings, then follow the Linux steps above. If you cannot, use the online options below.</div>
+ </div>
+
+ <h3>Now try it (all computers)</h3>
+ <ol class="steps">
+  <li>In the IDLE Shell window click <b>File</b>, then <b>New File</b>. A blank window opens. This is where we write code.</li>
+  <li>Type these lines. <b>Type, do not paste.</b>
+   <div class="codebox">import turtle
+t = turtle
+t.forward(100)
+t.right(90)
+t.forward(100)</div></li>
+  <li>Press <b>Ctrl and S</b> (Mac: <b>Command and S</b>). Save it in a folder you can find, called <b>7_test.py</b>.</li>
+  <li>Press <b>F5</b> (on some Macs and laptops: <b>fn and F5</b>, or <b>Run</b>, then <b>Run Module</b>). A <b>Python Turtle Graphics</b> window opens and an arrow draws an L shape. <b>It works!</b></li>
+ </ol>
+ <p>Now open the <a href="index.html">Python Turtle picture guides</a> and make a Robot.</p>
+
+ <details>
+  <summary>It did not work. What do I check?</summary>
+  <ul class="tight">
+   <li><b>No turtle window:</b> did you press <b>F5</b> in the <b>file window</b> (the blank one you typed in), not the Shell?</li>
+   <li><b>Red error message:</b> check spelling, capital letters, brackets and quotes. Python uses the American spelling, so <code>t.fillcolor</code>, never <code>fillcolour</code>.</li>
+   <li><b>"No module named tkinter" or "_tkinter":</b> on Linux, install Tk: <code>sudo apt install python3-tk</code>. On Windows or Mac, run the python.org installer again.</li>
+   <li><b>Window disappears at once:</b> run the file from IDLE with F5. Double-clicking a .py file closes the window the moment it finishes.</li>
+   <li>Still stuck? Take a photo of the red message and show your teacher.</li>
+  </ul>
+ </details>
+</section>
+
+<section class="card" id="online">
+ <h2>B. Online sandboxes (nothing to install)</h2>
+ <div class="warn"><b>Trinket has closed.</b> Trinket was a very popular free Python website, but it shut down on <b>31 August 2026</b>. Old links to trinket.io will not work. If you find an old worksheet with a trinket link, use one of the options below instead.</div>
+ <p>A <b>sandbox</b> is a website where you can type and run code in your web browser, with nothing installed. Always check with a parent first, and see the safety notes under the table.</p>
+ <table><thead><tr><th>Website</th><th>Turtle pictures?</th><th>Account needed?</th><th>Notes</th></tr></thead><tbody><tr><td><b>JuiceMind Python Turtle</b><br><span class='fine'>juicemind.com/python-turtle-ide</span></td><td class='y'>Yes</td><td class='y'>No, to try it</td><td>Runs in the browser and the picture appears beside your code. Says it is built for school classrooms. Has a Login button: you do not need to use it.</td></tr><tr><td><b>Coddy Python Turtle</b><br><span class='fine'>coddy.tech/playground/turtle</span></td><td class='y'>Yes</td><td class='y'>No (the site says so)</td><td>The site says it is free and runs in the browser, including on Chromebooks. Programs that react to key presses or mouse clicks do not run. We could not open this page to check, so look for yourself first.</td></tr><tr><td><b>OneCompiler Turtle</b><br><span class='fine'>onecompiler.com/turtle</span></td><td class='y'>Yes</td><td class='n'>Not stated</td><td>The turtle window is streamed from a server, so it needs a good internet connection. The site does not say who it is for or what it does with your code. Ask a parent first.</td></tr></tbody></table>
+ <h3>Safety notes for online editors</h3>
+ <ul class="tight">
+  <li>Pick a site that works with <b>no account</b>. If it asks for a name, email or date of birth, ask a parent and check the age rules.</li>
+  <li>Never type your full name, address, school or passwords into code or into the site.</li>
+  <li>Do not click ads or "download" buttons. You never need to download anything to run code in the page.</li>
+  <li>Many free sites do not save your work when you close the page. <b>Copy your finished code into a file or a notebook</b> so you do not lose it.</li>
+  <li>A website is not exactly the same as IDLE. If something works in IDLE but not online, it is usually the website.</li>
+ </ul>
+</section>
+
+<section class="card">
+ <h2>Quick answers</h2>
+ <ul class="tight">
+  <li><b>Is Python safe?</b> Yes, when it comes from python.org. It is free, open source software used all over the world.</li>
+  <li><b>Does it cost anything?</b> No.</li>
+  <li><b>Which version?</b> The newest Python 3 on python.org (3.15 when this guide was checked). Any recent Python 3 works for the school picture guides.</li>
+ </ul>
+</section>
+<nav class="pn"><a href="index.html">&larr; Python Turtle picture guides</a></nav>
+<p class="fine">Install steps checked on 27 November 2026 against docs.python.org (Python 3.15). Software changes: if a screen looks different, look for the same button names.</p>
+</main>
+<script>
+(function(){
+  var ids=['win','mac','lin'];
+  function show(id,focus){
+    ids.forEach(function(i){
+      var on=(i===id), b=document.getElementById('t-'+i), p=document.getElementById('p-'+i);
+      b.setAttribute('aria-selected',on?'true':'false'); b.tabIndex=on?0:-1; p.hidden=!on;
+      if(on&&focus)b.focus();
+    });
+    try{localStorage.setItem('home_guide_os',id);}catch(e){}
+  }
+  var ua=(navigator.userAgent||'')+' '+(navigator.platform||''), pick='win';
+  if(/Mac/i.test(ua)&&!/iPhone|iPad/i.test(ua))pick='mac';
+  else if(/Linux|X11|CrOS/i.test(ua)&&!/Android/i.test(ua))pick='lin';
+  try{var s=localStorage.getItem('home_guide_os'); if(ids.indexOf(s)>=0)pick=s;}catch(e){}
+  show(pick,false);
+  ids.forEach(function(i,n){
+    var b=document.getElementById('t-'+i);
+    b.addEventListener('click',function(){show(i,false);});
+    b.addEventListener('keydown',function(e){
+      var d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;
+      if(d){e.preventDefault();show(ids[(n+d+ids.length)%ids.length],true);}
+    });
+  });
+})();
+</script>
+</body>
+</html>
