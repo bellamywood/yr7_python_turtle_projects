@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Key Quest Part 5: The door</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#17223b;--muted:#4a5568;--line:#b8c0cc;--blue:#1d4ed8;--blueb:#dbeafe;
+--green:#007344;--greenb:#e6f2ec;--amber:#8a4300;--amberb:#fef3c7;--red:#b91c1c;--redb:#fee2e2;--code:#fffef8;
+--gold:#b8860b;--goldb:#fff3bf;--bar:#c2410c}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1524;--card:#18213a;--ink:#e8ecf7;--muted:#aab4cc;
+--line:#2f3b5d;--blue:#8fb3ff;--blueb:#1b2a55;--green:#5fd39c;--greenb:#10332a;--amber:#f0b45a;--amberb:#3a2f12;--red:#ff9b9b;
+--redb:#3d1a1a;--code:#0c1220;--gold:#ffd966;--goldb:#3d3210;--bar:#ffa56b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.55 Arial,Helvetica,sans-serif}
+header{background:var(--hd,#007344);color:#fff;padding:14px 20px}
+header .top{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between}
+header h1{margin:0;font-size:1.7rem}
+header .sub{opacity:.95;font-size:.95rem}
+.badge{display:inline-block;font-weight:bold;border:2px solid #fff;border-radius:99px;padding:1px 12px;margin-right:6px}
+.meter{background:rgba(255,255,255,.3);border-radius:99px;height:14px;width:220px;overflow:hidden}
+.meter i{display:block;height:100%;background:#fff;width:0;transition:width .3s}
+main{max-width:1180px;margin:0 auto;padding:16px}
+.ice{background:var(--goldb);border:3px solid var(--gold);border-radius:14px;padding:12px 16px;margin:0 0 16px;font-size:1.1rem}
+.ice b{font-size:1.25rem}
+.ice.none{background:var(--blueb);border-color:var(--blue)}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 16px}
+.card h2{margin:0 0 6px;font-size:1.3rem}
+.hero{display:grid;grid-template-columns:minmax(260px,1fr) minmax(280px,1.1fr);gap:16px;align-items:center}
+@media (max-width:820px){.hero,.stepgrid{grid-template-columns:1fr!important}}
+svg.pic{width:100%;height:auto;border:2px solid var(--line);border-radius:10px;display:block;background:#fff}
+svg.pic .old{opacity:.35}
+ul.tight{margin:6px 0;padding-left:22px}
+ul.tight li{margin:3px 0}
+.rule{background:var(--amberb);border-left:6px solid var(--amber);border-radius:8px;padding:8px 12px;margin:8px 0}
+.new{background:var(--greenb);border-left:6px solid var(--green);border-radius:8px;padding:6px 12px;margin:8px 0}
+.new b{color:var(--green)}
+.new code,.rule code,li code,p code{font-family:ui-monospace,Consolas,"DejaVu Sans Mono",monospace;background:rgba(0,0,0,.07);padding:0 4px;border-radius:4px;font-size:.92em}
+.step{scroll-margin-top:12px}
+.step.done{border-color:var(--green);background:linear-gradient(0deg,var(--greenb),var(--card) 30%)}
+.step h2 .num{display:inline-block;background:var(--blue);color:#fff;border-radius:99px;min-width:2em;text-align:center;margin-right:8px;padding:0 8px}
+.step.done h2 .num{background:var(--green)}
+.stepgrid{display:grid;grid-template-columns:minmax(300px,1.15fr) minmax(260px,1fr);gap:16px;align-items:start}
+.lab{font-weight:bold;color:var(--blue);margin:10px 0 2px}
+.code{background:var(--code);border:2px solid var(--ink);border-radius:10px;padding:10px 6px;
+font:20px/1.55 ui-monospace,Consolas,"DejaVu Sans Mono",monospace;font-variant-ligatures:none;
+overflow-x:auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:default}
+.ln{display:flex;white-space:pre}
+.no{flex:none;width:2.8em;text-align:right;padding-right:.9em;color:var(--muted);font-size:.85em}
+.ind{flex:none;display:inline-block;width:4ch;border-left:3px solid var(--bar);margin-left:.1ch;opacity:.8}
+.tx{white-space:pre}
+.fine{color:var(--muted);font-size:.92rem}
+.chk{display:flex;gap:10px;align-items:center;margin-top:12px;font-weight:bold;cursor:pointer}
+.chk input{width:26px;height:26px;accent-color:var(--green)}
+.finish{display:none;background:var(--greenb);border:3px solid var(--green);border-radius:14px;padding:14px 18px;margin:0 0 16px;font-size:1.15rem}
+.finish.show{display:block}
+details{margin:10px 0}
+summary{cursor:pointer;font-weight:bold}
+summary:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+nav.pn{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:10px 0}
+nav.pn a,a.btn{background:var(--blue);color:#fff;text-decoration:none;font-weight:bold;border-radius:10px;padding:8px 14px;display:inline-block}
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#17223b;color:#fff;padding:10px 18px;border-radius:10px;
+font-weight:bold;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9}
+#toast.on{opacity:1}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--blueb)}
+td svg.pic{width:150px}
+td a{color:var(--blue);font-size:1.05rem}
+.lv-Easy{--hd:#007344}.lv-Medium{--hd:#a15c00}.lv-Hard{--hd:#9f1239}
+.tag{display:inline-block;font-size:.82rem;font-weight:bold;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin:2px 3px 0 0}
+@media print{.chk,#toast{display:none}}
+
+.sitenav{background:#0b1220;display:flex;flex-wrap:wrap;gap:4px 6px;padding:6px 14px;align-items:center}
+.sitenav .brand{color:#fff;font-weight:bold;margin-right:10px}
+.sitenav a{color:#e8ecf7;text-decoration:none;font-weight:bold;border-radius:8px;padding:4px 12px}
+.sitenav a:hover{background:#24324f}
+.sitenav a[aria-current=page]{background:#fff;color:#0b1220}
+.sitenav a:focus-visible{outline:3px solid #f0b45a;outline-offset:2px}
+
+.starter{background:var(--code);border:2px solid var(--ink);border-radius:10px;padding:10px 6px;font:15px/1.45 ui-monospace,Consolas,"DejaVu Sans Mono",monospace;
+white-space:pre;overflow:auto;max-height:420px;user-select:text}
+.legend span{display:inline-block;border:2px solid var(--line);border-radius:99px;padding:0 10px;margin:2px 4px 2px 0;font-weight:bold;background:var(--card)}
+.big a.btn{font-size:1.1rem}
+.where{background:var(--blueb);border-left:6px solid var(--blue);border-radius:8px;padding:6px 12px;margin:8px 0}
+table.pl td:first-child{white-space:nowrap}
+.cap{font-weight:bold}
+.codeline{display:block}
+.code{font-size:clamp(14px,1.7vw,20px)}
+.stepgrid{grid-template-columns:minmax(300px,1.5fr) minmax(240px,1fr)}
+</style>
+</head>
+<body class="lv-Medium" data-key="kq5">
+<nav class="sitenav" aria-label="Site"><span class="brand">Python Turtle</span><a href="../index.html">Picture guides</a><a href="../platformer/index.html" aria-current=page>Key Quest game</a><a href="../Python_at_Home.html">Python at home</a></nav>
+<header>
+ <div class="top">
+  <div><h1>Key Quest, Part 5: The door</h1>
+   <div class="sub"><a href="index.html" style="color:#fff;font-weight:bold;margin-right:8px">&larr; All parts</a>
+   <span class="badge">Part 5 of 7</span><span class="badge">About 10 minutes</span></div></div>
+  <div><div class="meter" aria-hidden="true"><i></i></div><div class="sub" id="count" aria-live="polite"></div></div>
+ </div>
+</header>
+<main>
+<section class="card"><h2>In this part</h2><p>Make the door open, but only if you have the key.</p>
+<p><b>You will learn:</b> An if inside an if. else. Remembering things.</p>
+<p class="fine">Open your own file <code>7_keyquest.py</code> in IDLE. You carry on from the last part.</p>
+<details><summary>My game does not work. What do I check?</summary><ul class="tight">
+ <li><b>Nothing moves at all:</b> did you <b>click on the game window</b> once? The window must be clicked before it hears the keys.</li>
+ <li><b>Red error text in the IDLE Shell:</b> read the last line. It says what is wrong and which line.</li>
+ <li><b>NameError:</b> a spelling mistake, like <code>playre</code> or <code>go_rigth</code>. Check capitals: everything here is lower case.</li>
+ <li><b>IndentationError:</b> the bars are wrong. Match the bars on this page.</li>
+ <li><b>SyntaxError:</b> a missing bracket <code>)</code>, quote <code>"</code> or colon <code>:</code>. Check the line IDLE shows, and the one above it.</li>
+ <li><b>The game window closes at once:</b> run it from IDLE with <b>F5</b>. Do not double-click the file.</li>
+ <li><b>You typed in the wrong place:</b> your code must be <b>under a PART line</b> and <b>above</b> the line that says Do not type below this line.</li>
+ <li>Still stuck? Read your lines out loud to a partner. Then ask your teacher.</li></ul></details></section>
+<div class="finish" role="status"><b>Part 5 done!</b> Save the file with Ctrl and S. Go to the next part.</div>
+
+<section class="card step" id="s1">
+ <h2><span class="num">1</span>Make a function called check_door</h2>
+ <p>Same idea as the key. Is the player touching the door? If yes, do they have the key?</p>
+ <div class="stepgrid"><div><div class="new"><b>New idea (read this, do not type it):</b><ul class="tight"><li><code>if player.has_key:</code> &nbsp;has_key is True or False. The if only runs when it is True.</li><li><code>else:</code> &nbsp;Runs when the if was False. Here: no key, so the door stays locked.</li><li><code>door.shapesize(3, 0.3)</code> &nbsp;Changes the size of the door. 0.3 makes it very thin, so it looks open.</li></ul></div><div class="where"><b>Where to type:</b> find the line that says <code>PART 5: THE DOOR</code> (Ctrl and F helps). Click at the very <b>end</b> of that line and press <b>Enter</b>. Type your lines <b>under</b> it.</div><div class="lab">Type these 7 lines:</div><div class="code" aria-label="Code to type. Copying is switched off."><span class="ln"><span class="tx">def check_door():</span></span><span class="ln"><span class="ind"></span><span class="tx">if player.distance(door) &lt; 40:</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="tx">if player.has_key:</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="ind"></span><span class="tx">door.shapesize(3, 0.3)</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="ind"></span><span class="tx">say(&quot;The door is open. You win!&quot;)</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="tx">else:</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="ind"></span><span class="tx">say(&quot;The door is locked. Find the key!&quot;)</span></span></div><div class="rule">Each <span style="border-left:3px solid var(--bar);padding-left:6px">bar</span> is one indent. IDLE adds one for you after a colon. Do <b>not</b> type the spaces. Press <b>Backspace</b> to remove a bar.</div><div class="lab">Test it:</div><ul class="tight"><li>Press <b>F5</b>. Go to the red door <b>without</b> the key. You should see: <i>The door is locked.</i></li><li>Now get the key first, then go to the door. The door goes thin and you win!</li></ul><div class="rule"><b>Tip:</b> Two ifs, one inside the other. The inside one is indented twice. IDLE adds the indents for you after each colon.</div></div><div><div class="lab">What you should see:</div><p class="cap">Touching the door with no key:</p><svg xmlns="http://www.w3.org/2000/svg" viewBox="-400 -300 800 600" role="img" aria-label="Touching the door with no key" class="pic"><rect x="-400" y="-300" width="800" height="600" fill="skyblue"/><text x="-1.0" y="-246.45172" text-anchor="middle" font-family="Arial, Arial, sans-serif" font-size="29.3" font-weight="bold" fill="black">The door is locked. Find the key!</text><polygon points="-400.0,270.0 400.0,270.0 400.0,230.0 -400.0,230.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="-320.0,170.0 -180.0,170.0 -180.0,150.0 -320.0,150.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="-130.0,90.0 10.0,90.0 10.0,70.0 -130.0,70.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="60.0,10.0 200.0,10.0 200.0,-10.0 60.0,-10.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="230.0,-70.0 370.0,-70.0 370.0,-90.0 230.0,-90.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="-250.0,127.0 -247.84,126.66 -245.88,125.66 -244.34,124.12 -243.34,122.16 -243.0,120.0 -243.34,117.84 -244.34,115.88 -245.88,114.34 -247.84,113.34 -250.0,113.0 -252.16,113.34 -254.12,114.34 -255.66,115.88 -256.66,117.84 -257.0,120.0 -256.66,122.16 -255.66,124.12 -254.12,125.66 -252.16,126.66" fill="gold" stroke="darkorange" stroke-width="1.0" stroke-linejoin="round"/><polygon points="-60.0,47.0 -57.84,46.66 -55.88,45.66 -54.34,44.12 -53.34,42.16 -53.0,40.0 -53.34,37.84 -54.34,35.88 -55.88,34.34 -57.84,33.34 -60.0,33.0 -62.16,33.34 -64.12,34.34 -65.66,35.88 -66.66,37.84 -67.0,40.0 -66.66,42.16 -65.66,44.12 -64.12,45.66 -62.16,46.66" fill="gold" stroke="darkorange" stroke-width="1.0" stroke-linejoin="round"/><polygon points="130.0,-33.0 132.16,-33.34 134.12,-34.34 135.66,-35.88 136.66,-37.84 137.0,-40.0 136.66,-42.16 135.66,-44.12 134.12,-45.66 132.16,-46.66 130.0,-47.0 127.84,-46.66 125.88,-45.66 124.34,-44.12 123.34,-42.16 123.0,-40.0 123.34,-37.84 124.34,-35.88 125.88,-34.34 127.84,-33.34" fill="gold" stroke="darkorange" stroke-width="1.0" stroke-linejoin="round"/><polygon points="325.0,227.4 345.0,227.4 345.0,207.4 325.0,207.4" fill="royalblue" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="279.0,-114.0 281.52,-108.12 287.4,-105.6 293.28,-108.12 295.8,-111.2 319.6,-111.2 319.6,-122.4 315.4,-122.4 315.4,-116.8 311.2,-116.8 311.2,-121.0 307.0,-121.0 307.0,-116.8 295.8,-116.8 293.28,-119.88 287.4,-122.4 281.52,-119.88" fill="gold" stroke="darkgoldenrod" stroke-width="1.0" stroke-linejoin="round"/><polygon points="320.0,230.0 360.0,230.0 360.0,170.0 320.0,170.0" fill="firebrick" stroke="black" stroke-width="1.0" stroke-linejoin="round"/></svg><p class="cap">Touching the door with the key:</p><svg xmlns="http://www.w3.org/2000/svg" viewBox="-400 -300 800 600" role="img" aria-label="Touching the door with the key" class="pic"><rect x="-400" y="-300" width="800" height="600" fill="skyblue"/><text x="-1.0" y="-246.45172" text-anchor="middle" font-family="Arial, Arial, sans-serif" font-size="29.3" font-weight="bold" fill="black">The door is open. You win!</text><polygon points="-400.0,270.0 400.0,270.0 400.0,230.0 -400.0,230.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="-320.0,170.0 -180.0,170.0 -180.0,150.0 -320.0,150.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="-130.0,90.0 10.0,90.0 10.0,70.0 -130.0,70.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="60.0,10.0 200.0,10.0 200.0,-10.0 60.0,-10.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="230.0,-70.0 370.0,-70.0 370.0,-90.0 230.0,-90.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="-250.0,127.0 -247.84,126.66 -245.88,125.66 -244.34,124.12 -243.34,122.16 -243.0,120.0 -243.34,117.84 -244.34,115.88 -245.88,114.34 -247.84,113.34 -250.0,113.0 -252.16,113.34 -254.12,114.34 -255.66,115.88 -256.66,117.84 -257.0,120.0 -256.66,122.16 -255.66,124.12 -254.12,125.66 -252.16,126.66" fill="gold" stroke="darkorange" stroke-width="1.0" stroke-linejoin="round"/><polygon points="-60.0,47.0 -57.84,46.66 -55.88,45.66 -54.34,44.12 -53.34,42.16 -53.0,40.0 -53.34,37.84 -54.34,35.88 -55.88,34.34 -57.84,33.34 -60.0,33.0 -62.16,33.34 -64.12,34.34 -65.66,35.88 -66.66,37.84 -67.0,40.0 -66.66,42.16 -65.66,44.12 -64.12,45.66 -62.16,46.66" fill="gold" stroke="darkorange" stroke-width="1.0" stroke-linejoin="round"/><polygon points="130.0,-33.0 132.16,-33.34 134.12,-34.34 135.66,-35.88 136.66,-37.84 137.0,-40.0 136.66,-42.16 135.66,-44.12 134.12,-45.66 132.16,-46.66 130.0,-47.0 127.84,-46.66 125.88,-45.66 124.34,-44.12 123.34,-42.16 123.0,-40.0 123.34,-37.84 124.34,-35.88 125.88,-34.34 127.84,-33.34" fill="gold" stroke="darkorange" stroke-width="1.0" stroke-linejoin="round"/><polygon points="325.0,227.4 345.0,227.4 345.0,207.4 325.0,207.4" fill="royalblue" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="279.0,-114.0 281.52,-108.12 287.4,-105.6 293.28,-108.12 295.8,-111.2 319.6,-111.2 319.6,-122.4 315.4,-122.4 315.4,-116.8 311.2,-116.8 311.2,-121.0 307.0,-121.0 307.0,-116.8 295.8,-116.8 293.28,-119.88 287.4,-122.4 281.52,-119.88" fill="gold" stroke="darkgoldenrod" stroke-width="1.0" stroke-linejoin="round"/><polygon points="337.0,230.0 343.0,230.0 343.0,170.0 337.0,170.0" fill="firebrick" stroke="black" stroke-width="1.0" stroke-linejoin="round"/></svg></div></div>
+ <label class="chk"><input type="checkbox"> I typed it, ran it, and it works.</label>
+</section>
+<div class="finish" role="status"><b>Part 5 done!</b> Save the file with Ctrl and S.</div>
+
+<section class="card"><details><summary>Teacher check: what the file should hold at the end of this part</summary><p class="fine"><b>Under PART 2: LEFT AND RIGHT</b></p><div class="code"><span class="ln"><span class="tx">def go_right():</span></span><span class="ln"><span class="ind"></span><span class="tx">player.setx(player.xcor() + 12)</span></span><span class="ln"><span class="tx">screen.onkeypress(go_right, &quot;Right&quot;)</span></span><span class="ln"><span class="tx">screen.listen()</span></span><span class="ln"><span class="tx">def go_left():</span></span><span class="ln"><span class="ind"></span><span class="tx">player.setx(player.xcor() - 12)</span></span><span class="ln"><span class="tx">screen.onkeypress(go_left, &quot;Left&quot;)</span></span></div><p class="fine"><b>Under PART 3: JUMPING</b></p><div class="code"><span class="ln"><span class="tx">def jump():</span></span><span class="ln"><span class="ind"></span><span class="tx">if player.on_ground:</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="tx">player.vy = 14</span></span><span class="ln"><span class="tx">screen.onkeypress(jump, &quot;space&quot;)</span></span><span class="ln"><span class="tx">screen.onkeypress(jump, &quot;Up&quot;)</span></span></div><p class="fine"><b>Under PART 4: THE KEY</b></p><div class="code"><span class="ln"><span class="tx">def check_key():</span></span><span class="ln"><span class="ind"></span><span class="tx">if player.distance(key) &lt; 30:</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="tx">key.goto(1000, 1000)</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="tx">player.has_key = True</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="tx">say(&quot;You got the key! Find the door.&quot;)</span></span></div><p class="fine"><b>Under PART 5: THE DOOR</b></p><div class="code"><span class="ln"><span class="tx">def check_door():</span></span><span class="ln"><span class="ind"></span><span class="tx">if player.distance(door) &lt; 40:</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="tx">if player.has_key:</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="ind"></span><span class="tx">door.shapesize(3, 0.3)</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="ind"></span><span class="tx">say(&quot;The door is open. You win!&quot;)</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="tx">else:</span></span><span class="ln"><span class="ind"></span><span class="ind"></span><span class="ind"></span><span class="tx">say(&quot;The door is locked. Find the key!&quot;)</span></span></div></details></section>
+<nav class="pn"><a href="part4_the_key.html">&larr; Part 4: The key</a><a href="index.html">All parts</a><a href="part6_coins.html">Part 6: Coins (bonus) &rarr;</a></nav>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+  var KEY='turtle_guide_'+document.body.dataset.key;
+  var steps=[].slice.call(document.querySelectorAll('.step'));
+  var meter=document.querySelector('.meter i');
+  var fin=[].slice.call(document.querySelectorAll('.finish'));
+  var saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
+  function paint(){
+    var n=0;
+    steps.forEach(function(s){var cb=s.querySelector('input');if(cb.checked){n++;s.classList.add('done');}else{s.classList.remove('done');}});
+    meter.style.width=(100*n/steps.length)+'%';
+    document.querySelector('#count').textContent=n+' of '+steps.length+' steps done';
+    fin.forEach(function(f){f.classList.toggle('show',n===steps.length);});
+  }
+  steps.forEach(function(s,i){
+    var cb=s.querySelector('input');
+    cb.checked=!!saved[i];
+    cb.addEventListener('change',function(){
+      saved[i]=cb.checked;
+      try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(e){}
+      paint();
+      if(cb.checked&&steps[i+1]){steps[i+1].scrollIntoView({behavior:'smooth',block:'start'});}
+    });
+  });
+  paint();
+  var toast=document.getElementById('toast'),tm;
+  function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){toast.classList.remove('on');},2200);}
+  ['copy','cut','dragstart','selectstart','contextmenu'].forEach(function(ev){
+    document.querySelectorAll('.code').forEach(function(c){
+      c.addEventListener(ev,function(e){e.preventDefault();say('Type it yourself! Copying is switched off on purpose.');});
+    });
+  });
+  document.addEventListener('copy',function(e){
+    var sel=window.getSelection(), s=String(sel), n=sel&&sel.anchorNode;
+    while(n&&n.nodeType!==1)n=n.parentNode;
+    if(n&&n.closest&&n.closest('.starter'))return;
+    if(s&&s.length>0){e.preventDefault();say('Type it yourself! Copying is switched off on purpose.');}
+  });
+})();
+
+(function(){var b=document.getElementById('copybtn');if(!b)return;
+b.addEventListener('click',function(){var t=document.getElementById('starter').textContent,m=document.getElementById('copymsg');
+function ok(){m.textContent='Copied! Now paste it into a new IDLE file.';}
+function fail(){var r=document.createRange();r.selectNodeContents(document.getElementById('starter'));var s=window.getSelection();s.removeAllRanges();s.addRange(r);m.textContent='Selected. Press Ctrl and C to copy.';}
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fail);}else{fail();}});})();
+</script>
+</body>
+</html>

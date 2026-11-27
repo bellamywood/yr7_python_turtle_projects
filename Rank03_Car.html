@@ -70,9 +70,17 @@ td a{color:var(--blue);font-size:1.05rem}
 .lv-Easy{--hd:#007344}.lv-Medium{--hd:#a15c00}.lv-Hard{--hd:#9f1239}
 .tag{display:inline-block;font-size:.82rem;font-weight:bold;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin:2px 3px 0 0}
 @media print{.chk,#toast{display:none}}
+
+.sitenav{background:#0b1220;display:flex;flex-wrap:wrap;gap:4px 6px;padding:6px 14px;align-items:center}
+.sitenav .brand{color:#fff;font-weight:bold;margin-right:10px}
+.sitenav a{color:#e8ecf7;text-decoration:none;font-weight:bold;border-radius:8px;padding:4px 12px}
+.sitenav a:hover{background:#24324f}
+.sitenav a[aria-current=page]{background:#fff;color:#0b1220}
+.sitenav a:focus-visible{outline:3px solid #f0b45a;outline-offset:2px}
 </style>
 </head>
 <body class="lv-Easy" data-key="car">
+<nav class="sitenav" aria-label="Site"><span class="brand">Python Turtle</span><a href="index.html" aria-current=page>Picture guides</a><a href="platformer/index.html">Key Quest game</a><a href="Python_at_Home.html">Python at home</a></nav>
 <header>
  <div class="top">
   <div>
@@ -84,7 +92,6 @@ td a{color:var(--blue);font-size:1.05rem}
  </div>
 </header>
 <main>
-<div class="ice none"><b>Easy picture: finish all three Easy pictures for 5 ICE (positive) points together.</b><br>The three Easy pictures are the Robot, the Ice Cream and the Car. Complete all three Python files and show your teacher for <b>5 ICE (positive) points</b>, guaranteed. Then move up: each <b>Medium</b> picture (ranks 4 to 8) is <b>5 ICE points</b> by itself and each <b>Hard</b> picture (ranks 9 to 12) is <b>10 ICE points</b> by itself.</div>
 <section class="card">
  <div class="hero">
   <div>
@@ -124,7 +131,7 @@ td a{color:var(--blue);font-size:1.05rem}
   </ul>
  </details>
 </section>
-<div class="finish" role="status"><b>Well done!</b> Save the file (Ctrl and S) and show your teacher. Finish <b>all three</b> Easy pictures (Robot, Ice Cream, Car) to earn <b>5 ICE (positive) points</b>, guaranteed. Then try a <b>Medium</b> (5 points each) or a <b>Hard</b> (10 points each).</div>
+<div class="finish" role="status"><b>You did it!</b> Save the file (Ctrl and S), press F5, and show your teacher the picture on your screen. Then choose another picture.</div>
 
 <section class="card step" id="s1">
  <h2><span class="num">1</span>Set up your file</h2>
@@ -316,7 +323,7 @@ td a{color:var(--blue);font-size:1.05rem}
  <label class="chk"><input type="checkbox"> I typed it, ran it, and my picture matches.</label>
  <p class="fine">Check: your last line of code should be line 67. (If you added empty lines, your number will be a bit bigger. That is fine.)</p>
 </section>
-<div class="finish" role="status"><b>Well done!</b> Save the file (Ctrl and S) and show your teacher. Finish <b>all three</b> Easy pictures (Robot, Ice Cream, Car) to earn <b>5 ICE (positive) points</b>, guaranteed. Then try a <b>Medium</b> (5 points each) or a <b>Hard</b> (10 points each).</div>
+<div class="finish" role="status"><b>You did it!</b> Save the file (Ctrl and S), press F5, and show your teacher the picture on your screen. Then choose another picture.</div>
 <section class="card">
  <h2>Challenge (if you finish early)</h2>
  <p>Add a spoiler, a door line or a roof rack. Or add a second car with a different colour.</p>
@@ -365,7 +372,9 @@ td a{color:var(--blue);font-size:1.05rem}
     });
   });
   document.addEventListener('copy',function(e){
-    var s=String(window.getSelection());
+    var sel=window.getSelection(), s=String(sel), n=sel&&sel.anchorNode;
+    while(n&&n.nodeType!==1)n=n.parentNode;
+    if(n&&n.closest&&n.closest('.starter'))return;
     if(s&&s.length>0){e.preventDefault();say('Type it yourself! Copying is switched off on purpose.');}
   });
 })();

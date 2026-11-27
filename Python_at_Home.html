@@ -71,6 +71,13 @@ td a{color:var(--blue);font-size:1.05rem}
 .tag{display:inline-block;font-size:.82rem;font-weight:bold;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin:2px 3px 0 0}
 @media print{.chk,#toast{display:none}}
 
+.sitenav{background:#0b1220;display:flex;flex-wrap:wrap;gap:4px 6px;padding:6px 14px;align-items:center}
+.sitenav .brand{color:#fff;font-weight:bold;margin-right:10px}
+.sitenav a{color:#e8ecf7;text-decoration:none;font-weight:bold;border-radius:8px;padding:4px 12px}
+.sitenav a:hover{background:#24324f}
+.sitenav a[aria-current=page]{background:#fff;color:#0b1220}
+.sitenav a:focus-visible{outline:3px solid #f0b45a;outline-offset:2px}
+
 .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 12px}
 .tabs button{font:inherit;font-weight:bold;border:3px solid var(--blue);background:var(--card);color:var(--blue);border-radius:12px;padding:8px 20px;cursor:pointer}
 .tabs button[aria-selected=true]{background:var(--blue);color:#fff}
@@ -90,6 +97,7 @@ td.n{color:var(--red);font-weight:bold}
 </style>
 </head>
 <body style="--hd:#17223b">
+<nav class="sitenav" aria-label="Site"><span class="brand">Python Turtle</span><a href="index.html">Picture guides</a><a href="platformer/index.html">Key Quest game</a><a href="Python_at_Home.html" aria-current=page>Python at home</a></nav>
 <header><div class="top"><div><h1>Coding Python at home</h1>
 <div class="sub">A guide for parents and pupils. Free software. No account needed to install it.</div></div>
 <a class="btn" href="index.html">Python Turtle picture guides</a></div></header>
@@ -122,7 +130,7 @@ td.n{color:var(--red);font-weight:bold}
 
 <section class="card" id="install">
  <h2>A. Install Python</h2>
- <p>Choose your computer. We have picked the one we think you are using, but you can change it.</p>
+ <p>Choose your computer. Windows is shown first. Click <b>Mac</b> or <b>Linux</b> if that is what you have.</p>
  <div class="tabs" role="tablist" aria-label="Choose your computer">
   <button role="tab" id="t-win" aria-controls="p-win" aria-selected="true">Windows</button>
   <button role="tab" id="t-mac" aria-controls="p-mac" aria-selected="false" tabindex="-1">Mac</button>
@@ -226,13 +234,8 @@ t.forward(100)</div></li>
       b.setAttribute('aria-selected',on?'true':'false'); b.tabIndex=on?0:-1; p.hidden=!on;
       if(on&&focus)b.focus();
     });
-    try{localStorage.setItem('home_guide_os',id);}catch(e){}
   }
-  var ua=(navigator.userAgent||'')+' '+(navigator.platform||''), pick='win';
-  if(/Mac/i.test(ua)&&!/iPhone|iPad/i.test(ua))pick='mac';
-  else if(/Linux|X11|CrOS/i.test(ua)&&!/Android/i.test(ua))pick='lin';
-  try{var s=localStorage.getItem('home_guide_os'); if(ids.indexOf(s)>=0)pick=s;}catch(e){}
-  show(pick,false);
+  show('win',false);   // Windows is always the default
   ids.forEach(function(i,n){
     var b=document.getElementById('t-'+i);
     b.addEventListener('click',function(){show(i,false);});

@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Key Quest Part 1: Get the starter</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--ink:#17223b;--muted:#4a5568;--line:#b8c0cc;--blue:#1d4ed8;--blueb:#dbeafe;
+--green:#007344;--greenb:#e6f2ec;--amber:#8a4300;--amberb:#fef3c7;--red:#b91c1c;--redb:#fee2e2;--code:#fffef8;
+--gold:#b8860b;--goldb:#fff3bf;--bar:#c2410c}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1524;--card:#18213a;--ink:#e8ecf7;--muted:#aab4cc;
+--line:#2f3b5d;--blue:#8fb3ff;--blueb:#1b2a55;--green:#5fd39c;--greenb:#10332a;--amber:#f0b45a;--amberb:#3a2f12;--red:#ff9b9b;
+--redb:#3d1a1a;--code:#0c1220;--gold:#ffd966;--goldb:#3d3210;--bar:#ffa56b}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.55 Arial,Helvetica,sans-serif}
+header{background:var(--hd,#007344);color:#fff;padding:14px 20px}
+header .top{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between}
+header h1{margin:0;font-size:1.7rem}
+header .sub{opacity:.95;font-size:.95rem}
+.badge{display:inline-block;font-weight:bold;border:2px solid #fff;border-radius:99px;padding:1px 12px;margin-right:6px}
+.meter{background:rgba(255,255,255,.3);border-radius:99px;height:14px;width:220px;overflow:hidden}
+.meter i{display:block;height:100%;background:#fff;width:0;transition:width .3s}
+main{max-width:1180px;margin:0 auto;padding:16px}
+.ice{background:var(--goldb);border:3px solid var(--gold);border-radius:14px;padding:12px 16px;margin:0 0 16px;font-size:1.1rem}
+.ice b{font-size:1.25rem}
+.ice.none{background:var(--blueb);border-color:var(--blue)}
+.card{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 16px}
+.card h2{margin:0 0 6px;font-size:1.3rem}
+.hero{display:grid;grid-template-columns:minmax(260px,1fr) minmax(280px,1.1fr);gap:16px;align-items:center}
+@media (max-width:820px){.hero,.stepgrid{grid-template-columns:1fr!important}}
+svg.pic{width:100%;height:auto;border:2px solid var(--line);border-radius:10px;display:block;background:#fff}
+svg.pic .old{opacity:.35}
+ul.tight{margin:6px 0;padding-left:22px}
+ul.tight li{margin:3px 0}
+.rule{background:var(--amberb);border-left:6px solid var(--amber);border-radius:8px;padding:8px 12px;margin:8px 0}
+.new{background:var(--greenb);border-left:6px solid var(--green);border-radius:8px;padding:6px 12px;margin:8px 0}
+.new b{color:var(--green)}
+.new code,.rule code,li code,p code{font-family:ui-monospace,Consolas,"DejaVu Sans Mono",monospace;background:rgba(0,0,0,.07);padding:0 4px;border-radius:4px;font-size:.92em}
+.step{scroll-margin-top:12px}
+.step.done{border-color:var(--green);background:linear-gradient(0deg,var(--greenb),var(--card) 30%)}
+.step h2 .num{display:inline-block;background:var(--blue);color:#fff;border-radius:99px;min-width:2em;text-align:center;margin-right:8px;padding:0 8px}
+.step.done h2 .num{background:var(--green)}
+.stepgrid{display:grid;grid-template-columns:minmax(300px,1.15fr) minmax(260px,1fr);gap:16px;align-items:start}
+.lab{font-weight:bold;color:var(--blue);margin:10px 0 2px}
+.code{background:var(--code);border:2px solid var(--ink);border-radius:10px;padding:10px 6px;
+font:20px/1.55 ui-monospace,Consolas,"DejaVu Sans Mono",monospace;font-variant-ligatures:none;
+overflow-x:auto;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:default}
+.ln{display:flex;white-space:pre}
+.no{flex:none;width:2.8em;text-align:right;padding-right:.9em;color:var(--muted);font-size:.85em}
+.ind{flex:none;display:inline-block;width:4ch;border-left:3px solid var(--bar);margin-left:.1ch;opacity:.8}
+.tx{white-space:pre}
+.fine{color:var(--muted);font-size:.92rem}
+.chk{display:flex;gap:10px;align-items:center;margin-top:12px;font-weight:bold;cursor:pointer}
+.chk input{width:26px;height:26px;accent-color:var(--green)}
+.finish{display:none;background:var(--greenb);border:3px solid var(--green);border-radius:14px;padding:14px 18px;margin:0 0 16px;font-size:1.15rem}
+.finish.show{display:block}
+details{margin:10px 0}
+summary{cursor:pointer;font-weight:bold}
+summary:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid var(--amber);outline-offset:2px}
+nav.pn{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:10px 0}
+nav.pn a,a.btn{background:var(--blue);color:#fff;text-decoration:none;font-weight:bold;border-radius:10px;padding:8px 14px;display:inline-block}
+#toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#17223b;color:#fff;padding:10px 18px;border-radius:10px;
+font-weight:bold;opacity:0;pointer-events:none;transition:opacity .25s;z-index:9}
+#toast.on{opacity:1}
+table{border-collapse:collapse;width:100%}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--blueb)}
+td svg.pic{width:150px}
+td a{color:var(--blue);font-size:1.05rem}
+.lv-Easy{--hd:#007344}.lv-Medium{--hd:#a15c00}.lv-Hard{--hd:#9f1239}
+.tag{display:inline-block;font-size:.82rem;font-weight:bold;border:1px solid var(--line);border-radius:99px;padding:0 8px;margin:2px 3px 0 0}
+@media print{.chk,#toast{display:none}}
+
+.sitenav{background:#0b1220;display:flex;flex-wrap:wrap;gap:4px 6px;padding:6px 14px;align-items:center}
+.sitenav .brand{color:#fff;font-weight:bold;margin-right:10px}
+.sitenav a{color:#e8ecf7;text-decoration:none;font-weight:bold;border-radius:8px;padding:4px 12px}
+.sitenav a:hover{background:#24324f}
+.sitenav a[aria-current=page]{background:#fff;color:#0b1220}
+.sitenav a:focus-visible{outline:3px solid #f0b45a;outline-offset:2px}
+
+.starter{background:var(--code);border:2px solid var(--ink);border-radius:10px;padding:10px 6px;font:15px/1.45 ui-monospace,Consolas,"DejaVu Sans Mono",monospace;
+white-space:pre;overflow:auto;max-height:420px;user-select:text}
+.legend span{display:inline-block;border:2px solid var(--line);border-radius:99px;padding:0 10px;margin:2px 4px 2px 0;font-weight:bold;background:var(--card)}
+.big a.btn{font-size:1.1rem}
+.where{background:var(--blueb);border-left:6px solid var(--blue);border-radius:8px;padding:6px 12px;margin:8px 0}
+table.pl td:first-child{white-space:nowrap}
+.cap{font-weight:bold}
+.codeline{display:block}
+.code{font-size:clamp(14px,1.7vw,20px)}
+.stepgrid{grid-template-columns:minmax(300px,1.5fr) minmax(240px,1fr)}
+</style>
+</head>
+<body class="lv-Medium" data-key="kq1">
+<nav class="sitenav" aria-label="Site"><span class="brand">Python Turtle</span><a href="../index.html">Picture guides</a><a href="../platformer/index.html" aria-current=page>Key Quest game</a><a href="../Python_at_Home.html">Python at home</a></nav>
+<header>
+ <div class="top">
+  <div><h1>Key Quest, Part 1: Get the starter</h1>
+   <div class="sub"><a href="index.html" style="color:#fff;font-weight:bold;margin-right:8px">&larr; All parts</a>
+   <span class="badge">Part 1 of 7</span><span class="badge">About 8 minutes</span></div></div>
+  <div><div class="meter" aria-hidden="true"><i></i></div><div class="sub" id="count" aria-live="polite"></div></div>
+ </div>
+</header>
+<main>
+<section class="card"><h2>In this part</h2><p>Open the starter game and run it. The world is built for you. Nothing moves yet.</p>
+<p><b>You will learn:</b> Open a file in IDLE. Run a program. What is in the game.</p>
+
+<details><summary>My game does not work. What do I check?</summary><ul class="tight">
+ <li><b>Nothing moves at all:</b> did you <b>click on the game window</b> once? The window must be clicked before it hears the keys.</li>
+ <li><b>Red error text in the IDLE Shell:</b> read the last line. It says what is wrong and which line.</li>
+ <li><b>NameError:</b> a spelling mistake, like <code>playre</code> or <code>go_rigth</code>. Check capitals: everything here is lower case.</li>
+ <li><b>IndentationError:</b> the bars are wrong. Match the bars on this page.</li>
+ <li><b>SyntaxError:</b> a missing bracket <code>)</code>, quote <code>"</code> or colon <code>:</code>. Check the line IDLE shows, and the one above it.</li>
+ <li><b>The game window closes at once:</b> run it from IDLE with <b>F5</b>. Do not double-click the file.</li>
+ <li><b>You typed in the wrong place:</b> your code must be <b>under a PART line</b> and <b>above</b> the line that says Do not type below this line.</li>
+ <li>Still stuck? Read your lines out loud to a partner. Then ask your teacher.</li></ul></details></section>
+<div class="finish" role="status"><b>Part 1 done!</b> Save the file with Ctrl and S. Go to the next part.</div>
+
+<section class="card step" id="s1">
+ <h2><span class="num">1</span>Get the starter file</h2>
+ <p>The starter has the whole world and the game engine in it. You do not type it. Pick one way to get it.</p>
+ <div><ol class="steps"><li><b>Best:</b> click the button below to download <code>key_quest_starter.py</code>. It usually goes into your <b>Downloads</b> folder.</li><li><b>Cannot download?</b> Open the box called <i>Show the starter code</i> below, click the <b>Copy</b> button, then in IDLE choose <b>File, New File</b> and paste. Save it as <code>7_keyquest.py</code>.</li></ol><p class="big"><a class="btn" href="key_quest_starter.py" download="key_quest_starter.py">Download key_quest_starter.py</a></p><details><summary>Show the starter code (you can copy this one)</summary><p><button type="button" id="copybtn" class="btn">Copy the starter code</button> <span id="copymsg" class="fine"></span></p><div class="starter" id="starter"># KEY QUEST starter. Get the key, then open the door.
+# You do NOT need to understand the code above the PART lines.
+# You only type your own code under the PART lines.
+import turtle
+
+screen = turtle.Screen()
+screen.setup(800, 600)
+screen.bgcolor(&quot;skyblue&quot;)
+screen.title(&quot;Key Quest&quot;)
+screen.tracer(0)
+screen.register_shape(&quot;key&quot;, ((0, -15), (4.2, -13.2), (6, -9), (4.2, -4.8), (2, -3), (2, 14), (-6, 14), (-6, 11), (-2, 11), (-2, 8), (-5, 8), (-5, 5), (-2, 5), (-2, -3), (-4.2, -4.8), (-6, -9), (-4.2, -13.2)))
+
+# ---------- THE WORLD (already built for you) ----------
+platforms = []
+coins = []
+
+
+def make_platform(x, y, w, h):
+    p = turtle.Turtle()
+    p.shape(&quot;square&quot;)
+    p.color(&quot;black&quot;, &quot;forestgreen&quot;)
+    p.shapesize(h / 20, w / 20)
+    p.penup()
+    p.goto(x, y)
+    p.half_w = w / 2
+    p.top = y + h / 2
+    platforms.append(p)
+
+
+def make_coin(x, y):
+    c = turtle.Turtle()
+    c.shape(&quot;circle&quot;)
+    c.color(&quot;darkorange&quot;, &quot;gold&quot;)
+    c.shapesize(0.7)
+    c.penup()
+    c.goto(x, y)
+    coins.append(c)
+
+
+make_platform(0, -250, 800, 40)
+make_platform(-250, -160, 140, 20)
+make_platform(-60, -80, 140, 20)
+make_platform(130, 0, 140, 20)
+make_platform(300, 80, 140, 20)
+make_coin(-250, -120)
+make_coin(-60, -40)
+make_coin(130, 40)
+
+player = turtle.Turtle()
+player.shape(&quot;square&quot;)
+player.color(&quot;black&quot;, &quot;royalblue&quot;)
+player.penup()
+player.goto(-350, -220)
+player.vy = 0
+player.on_ground = False
+player.has_key = False
+player.score = 0
+
+key = turtle.Turtle()
+key.shape(&quot;key&quot;)
+key.color(&quot;darkgoldenrod&quot;, &quot;gold&quot;)
+key.penup()
+key.shapesize(1.4)
+key.goto(300, 114)
+
+door = turtle.Turtle()
+door.shape(&quot;square&quot;)
+door.color(&quot;black&quot;, &quot;firebrick&quot;)
+door.shapesize(3, 2)
+door.penup()
+door.goto(340, -200)
+
+writer = turtle.Turtle()
+writer.hideturtle()
+writer.penup()
+writer.goto(0, 240)
+
+
+def say(message):
+    writer.clear()
+    writer.write(message, align=&quot;center&quot;, font=(&quot;Arial&quot;, 22, &quot;bold&quot;))
+
+
+# ---------- THE GAME ENGINE (already built for you) ----------
+# These do nothing until YOU replace them in the PART steps.
+def check_key():
+    pass
+
+
+def check_door():
+    pass
+
+
+def check_coins():
+    pass
+
+
+def game_loop():
+    player.vy = player.vy - 0.8
+    player.sety(player.ycor() + player.vy)
+    player.on_ground = False
+    for p in platforms:
+        feet = player.ycor() - 10
+        was = feet - player.vy
+        if player.vy &lt;= 0 and was &gt;= p.top - 1 and feet &lt;= p.top and abs(player.xcor() - p.xcor()) &lt; p.half_w + 8:
+            player.sety(p.top + 10)
+            player.vy = 0
+            player.on_ground = True
+    if player.xcor() &lt; -390:
+        player.setx(-390)
+    if player.xcor() &gt; 390:
+        player.setx(390)
+    if player.ycor() &lt; -320:
+        player.goto(-350, -220)
+        player.vy = 0
+    check_key()
+    check_door()
+    check_coins()
+    screen.update()
+    screen.ontimer(game_loop, 20)
+
+
+# ===== PART 2: LEFT AND RIGHT. Type your code under this line =====
+
+# ===== PART 3: JUMPING. Type your code under this line =====
+
+# ===== PART 4: THE KEY. Type your code under this line =====
+
+# ===== PART 5: THE DOOR. Type your code under this line =====
+
+# ===== PART 6: COINS (bonus). Type your code under this line =====
+
+# ===== PART 7: MAKE IT YOURS (bonus). Type your code under this line =====
+
+# ===== Do not type below this line. The game starts here. =====
+game_loop()
+screen.mainloop()
+</div></details></div>
+ <label class="chk"><input type="checkbox"> I did this.</label>
+</section>
+<section class="card step" id="s2">
+ <h2><span class="num">2</span>Open it in IDLE and save your own copy</h2>
+ <p>Always work on your own copy. Then the starter stays safe if something goes wrong.</p>
+ <div><ol class="steps"><li>Open <b>IDLE</b>. Click <b>File</b>, then <b>Open</b>. Go to <b>Downloads</b>, find <code>key_quest_starter.py</code> and open it.</li><li>Click <b>File</b>, then <b>Save As</b>. Go to your Year 7 Python folder (in school: OneDrive, your name, Documents, Computing, Year 7, Python). Type the name <code>7_keyquest.py</code> and click <b>Save</b>.</li><li>From now on, only ever open and edit <code>7_keyquest.py</code>.</li></ol></div>
+ <label class="chk"><input type="checkbox"> I did this.</label>
+</section>
+<section class="card step" id="s3">
+ <h2><span class="num">3</span>Run it</h2>
+ <p>Press F5 to run the starter. You should see the game world.</p>
+ <div class="stepgrid"><div><ol class="steps"><li>Press <b>F5</b>. A window called <b>Key Quest</b> opens.</li><li>Click on the Key Quest window once. Press the arrow keys and the space bar.</li><li><b>Nothing moves.</b> That is right! You are about to make it move.</li></ol></div><div><div class="lab">What you should see:</div><p class="cap">The Key Quest world:</p><svg xmlns="http://www.w3.org/2000/svg" viewBox="-400 -300 800 600" role="img" aria-label="The Key Quest world" class="pic"><rect x="-400" y="-300" width="800" height="600" fill="skyblue"/><polygon points="-400.0,270.0 400.0,270.0 400.0,230.0 -400.0,230.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="-320.0,170.0 -180.0,170.0 -180.0,150.0 -320.0,150.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="-130.0,90.0 10.0,90.0 10.0,70.0 -130.0,70.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="60.0,10.0 200.0,10.0 200.0,-10.0 60.0,-10.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="230.0,-70.0 370.0,-70.0 370.0,-90.0 230.0,-90.0" fill="forestgreen" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="-250.0,127.0 -247.84,126.66 -245.88,125.66 -244.34,124.12 -243.34,122.16 -243.0,120.0 -243.34,117.84 -244.34,115.88 -245.88,114.34 -247.84,113.34 -250.0,113.0 -252.16,113.34 -254.12,114.34 -255.66,115.88 -256.66,117.84 -257.0,120.0 -256.66,122.16 -255.66,124.12 -254.12,125.66 -252.16,126.66" fill="gold" stroke="darkorange" stroke-width="1.0" stroke-linejoin="round"/><polygon points="-60.0,47.0 -57.84,46.66 -55.88,45.66 -54.34,44.12 -53.34,42.16 -53.0,40.0 -53.34,37.84 -54.34,35.88 -55.88,34.34 -57.84,33.34 -60.0,33.0 -62.16,33.34 -64.12,34.34 -65.66,35.88 -66.66,37.84 -67.0,40.0 -66.66,42.16 -65.66,44.12 -64.12,45.66 -62.16,46.66" fill="gold" stroke="darkorange" stroke-width="1.0" stroke-linejoin="round"/><polygon points="130.0,-33.0 132.16,-33.34 134.12,-34.34 135.66,-35.88 136.66,-37.84 137.0,-40.0 136.66,-42.16 135.66,-44.12 134.12,-45.66 132.16,-46.66 130.0,-47.0 127.84,-46.66 125.88,-45.66 124.34,-44.12 123.34,-42.16 123.0,-40.0 123.34,-37.84 124.34,-35.88 125.88,-34.34 127.84,-33.34" fill="gold" stroke="darkorange" stroke-width="1.0" stroke-linejoin="round"/><polygon points="-360.0,230.0 -340.0,230.0 -340.0,210.0 -360.0,210.0" fill="royalblue" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><polygon points="279.0,-114.0 281.52,-108.12 287.4,-105.6 293.28,-108.12 295.8,-111.2 319.6,-111.2 319.6,-122.4 315.4,-122.4 315.4,-116.8 311.2,-116.8 311.2,-121.0 307.0,-121.0 307.0,-116.8 295.8,-116.8 293.28,-119.88 287.4,-122.4 281.52,-119.88" fill="gold" stroke="darkgoldenrod" stroke-width="1.0" stroke-linejoin="round"/><polygon points="320.0,230.0 360.0,230.0 360.0,170.0 320.0,170.0" fill="firebrick" stroke="black" stroke-width="1.0" stroke-linejoin="round"/><text x="-350" y="150" font-family="Arial" font-size="26" font-weight="bold" text-anchor="middle" fill="#111" stroke="#fff" stroke-width="5" paint-order="stroke">YOU</text><text x="300" y="-150" font-family="Arial" font-size="26" font-weight="bold" text-anchor="middle" fill="#111" stroke="#fff" stroke-width="5" paint-order="stroke">KEY</text><text x="340" y="140" font-family="Arial" font-size="26" font-weight="bold" text-anchor="middle" fill="#111" stroke="#fff" stroke-width="5" paint-order="stroke">DOOR</text><text x="-250" y="92" font-family="Arial" font-size="26" font-weight="bold" text-anchor="middle" fill="#111" stroke="#fff" stroke-width="5" paint-order="stroke">COIN</text><text x="-250" y="197" font-family="Arial" font-size="26" font-weight="bold" text-anchor="middle" fill="#111" stroke="#fff" stroke-width="5" paint-order="stroke">PLATFORM</text></svg></div></div>
+ <label class="chk"><input type="checkbox"> I did this.</label>
+</section>
+<section class="card step" id="s4">
+ <h2><span class="num">4</span>Find the PART lines</h2>
+ <p>The starter has lines that begin with a # and say PART 2, PART 3 and so on. You will type your code under them.</p>
+ <div><ol class="steps"><li>In IDLE, press <b>Ctrl and F</b>. Type <code>PART 2</code> and press Enter. IDLE jumps to that line.</li><li>Look down the file. You can see PART 2, PART 3, PART 4, PART 5, PART 6 and PART 7, one after the other.</li><li>You only ever type <b>under</b> a PART line. Never change the lines above them.</li><li>The last PART line says <i>Do not type below this line</i>. That is where the game starts.</li></ol></div>
+ <label class="chk"><input type="checkbox"> I did this.</label>
+</section>
+<div class="finish" role="status"><b>Part 1 done!</b> Save the file with Ctrl and S.</div>
+
+
+<nav class="pn"><a href="index.html">&larr; Key Quest home</a><a href="index.html">All parts</a><a href="part2_left_and_right.html">Part 2: Left and right &rarr;</a></nav>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+(function(){
+  var KEY='turtle_guide_'+document.body.dataset.key;
+  var steps=[].slice.call(document.querySelectorAll('.step'));
+  var meter=document.querySelector('.meter i');
+  var fin=[].slice.call(document.querySelectorAll('.finish'));
+  var saved={};
+  try{saved=JSON.parse(localStorage.getItem(KEY)||'{}');}catch(e){}
+  function paint(){
+    var n=0;
+    steps.forEach(function(s){var cb=s.querySelector('input');if(cb.checked){n++;s.classList.add('done');}else{s.classList.remove('done');}});
+    meter.style.width=(100*n/steps.length)+'%';
+    document.querySelector('#count').textContent=n+' of '+steps.length+' steps done';
+    fin.forEach(function(f){f.classList.toggle('show',n===steps.length);});
+  }
+  steps.forEach(function(s,i){
+    var cb=s.querySelector('input');
+    cb.checked=!!saved[i];
+    cb.addEventListener('change',function(){
+      saved[i]=cb.checked;
+      try{localStorage.setItem(KEY,JSON.stringify(saved));}catch(e){}
+      paint();
+      if(cb.checked&&steps[i+1]){steps[i+1].scrollIntoView({behavior:'smooth',block:'start'});}
+    });
+  });
+  paint();
+  var toast=document.getElementById('toast'),tm;
+  function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){toast.classList.remove('on');},2200);}
+  ['copy','cut','dragstart','selectstart','contextmenu'].forEach(function(ev){
+    document.querySelectorAll('.code').forEach(function(c){
+      c.addEventListener(ev,function(e){e.preventDefault();say('Type it yourself! Copying is switched off on purpose.');});
+    });
+  });
+  document.addEventListener('copy',function(e){
+    var sel=window.getSelection(), s=String(sel), n=sel&&sel.anchorNode;
+    while(n&&n.nodeType!==1)n=n.parentNode;
+    if(n&&n.closest&&n.closest('.starter'))return;
+    if(s&&s.length>0){e.preventDefault();say('Type it yourself! Copying is switched off on purpose.');}
+  });
+})();
+
+(function(){var b=document.getElementById('copybtn');if(!b)return;
+b.addEventListener('click',function(){var t=document.getElementById('starter').textContent,m=document.getElementById('copymsg');
+function ok(){m.textContent='Copied! Now paste it into a new IDLE file.';}
+function fail(){var r=document.createRange();r.selectNodeContents(document.getElementById('starter'));var s=window.getSelection();s.removeAllRanges();s.addRange(r);m.textContent='Selected. Press Ctrl and C to copy.';}
+if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(ok,fail);}else{fail();}});})();
+</script>
+</body>
+</html>
